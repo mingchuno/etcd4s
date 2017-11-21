@@ -1,0 +1,21 @@
+language: scala
+jdk: oraclejdk8
+scala:
+  - 2.11.12
+  - 2.12.4
+sudo: required
+services:
+  - docker
+cache:
+  directories:
+    - $HOME/.ivy2/cache
+    - $HOME/.sbt/launchers
+script:
+  - travis_retry sbt ++$TRAVIS_SCALA_VERSION test
+before_install:
+  - docker pull quay.io/coreos/etcd:v3.2.10
+  - docker run -d -p 127.0.0.1:2379:2379 -e ETCD_LISTEN_CLIENT_URLS=http://0.0.0.0:2379 -e ETCD_ADVERTISE_CLIENT_URLS=http://localhost:2379 quay.io/coreos/etcd:v3.2.10
+  - docker ps -a
+before_cache:
+  - find $HOME/.sbt -name "*.lock" | xargs rm
+  - find $HOME/.ivy2 -name "ivydata-*.properties" | xargs rm
