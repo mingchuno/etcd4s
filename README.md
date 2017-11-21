@@ -13,7 +13,7 @@ This repo is a client library of [etcd](https://coreos.com/etcd/) implementing V
 * [protobuf defination](https://github.com/mingchuno/etcd4s/tree/master/etcd4s-core/src/main/protobuf)
 
 
-Note that this library do not support gRPC json gateway and use raw gRPC call instead (underlying is java-grpc). 
+Note that this library do not support gRPC json gateway and use raw gRPC call instead (underlying is java-grpc).
 
 ## Getting Started
 
@@ -22,8 +22,8 @@ TODO: install
 ```scala
 import java.util.concurrent.TimeUnit
 import io.grpc.ManagedChannelBuilder
-import etcd4s.implicits._
-import etcd4s.pb.etcdserverpb._
+import org.etcd4s.implicits._
+import org.etcd4s.pb.etcdserverpb._
 
 // create the client
 protected val client = {
@@ -33,7 +33,7 @@ protected val client = {
 }
 
 // set a key
-client.kvService.put(PutRequest().withKey("foo").withValue("bar"))
+client.kvService.put(PutRequest().withKey("foo").withValue("bar")) // return a Future
 
 // get a key
 val responseF: Future[RangeResponse] = client.kvService.range(RangeRequest().withKey("foo"))
@@ -64,9 +64,9 @@ client.channel.awaitTermination(5, TimeUnit.SECONDS)
 If you want the Akka Stream support for the stream APIs, you should add the `etcd4s-akka-stream` depns into your `build.sbt`
 
 ```scala
-import etcd4s.akkasupport._
-import etcd4s.implicits._
-import etcd4s.pb.etcdserverpb._
+import org.etcd4s.akkasupport._
+import org.etcd4s.implicits._
+import org.etcd4s.pb.etcdserverpb._
 import akka.NotUsed
 
 // assume you have the implicit value and client need in the scope
@@ -85,7 +85,9 @@ More example usage under the test dir in the repo.
 ### Requirment
 
 * Java 8+, Scala 12.11.X+ and sbt
-* A working etcd on your localhost with `ETCD_LISTEN_CLIENT_URLS=http://0.0.0.0:2379` and `ETCD_ADVERTISE_CLIENT_URLS=http://localhost:2379`
+* A working etcd on your localhost with:
+  - `ETCD_LISTEN_CLIENT_URLS=http://0.0.0.0:2379` and
+  - `ETCD_ADVERTISE_CLIENT_URLS=http://localhost:2379`
 
 ### How to start?
 
