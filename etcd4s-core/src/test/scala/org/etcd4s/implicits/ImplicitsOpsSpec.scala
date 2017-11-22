@@ -26,6 +26,22 @@ class ImplicitsOpsSpec extends FeatureSpec with Matchers {
       req.rangeEnd.toByteArray shouldBe ZERO
     }
 
+    scenario("should return b for a0xff") {
+      val AFF = Array[Byte](97, -1)
+      val B = Array[Byte](98)
+      val req = RangeRequest().withPrefix(ByteString.copyFrom(AFF))
+      req.key.toByteArray shouldBe AFF
+      req.rangeEnd.toByteArray shouldBe B
+    }
+
+    scenario("should wrap around with Byte.MaxValue") {
+      val MAX = Array[Byte](Byte.MaxValue)
+      val MIN = Array[Byte](Byte.MinValue)
+      val req = RangeRequest().withPrefix(ByteString.copyFrom(MAX))
+      req.key.toByteArray shouldBe MAX
+      req.rangeEnd.toByteArray shouldBe MIN
+    }
+
     scenario("try to CKJ chars") {
       val ckjStr = "你好"
       val arry: Array[Byte] = ckjStr.getBytes("UTF-8")
