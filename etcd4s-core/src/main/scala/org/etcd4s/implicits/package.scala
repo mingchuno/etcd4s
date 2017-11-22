@@ -25,16 +25,13 @@ trait RequestPrefixOps {
 
   private def getPrefix(key: ByteString): ByteString = {
     val bytes = key.toByteArray
-    val result = ArrayBuffer[Byte]()
     for (i <- (bytes.length - 1) to 0 by -1) {
       if (bytes(i) < Byte.MaxValue) {
-        for (j <- 0 until i) {
-          result += bytes(j)
-        }
-        result += (bytes(i) + 1).toByte
-        return ByteString.copyFrom(result.toArray)
+        bytes.update(i, (bytes(i) + 1).toByte)
+        return ByteString.copyFrom(bytes, 0, i + 1)
       }
     }
+
     noPrefixEnd
   }
 
