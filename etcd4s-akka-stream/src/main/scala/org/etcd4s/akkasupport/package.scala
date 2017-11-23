@@ -7,6 +7,8 @@ import org.etcd4s.pb.etcdserverpb.LeaseGrpc.Lease
 import org.etcd4s.pb.etcdserverpb.MaintenanceGrpc.Maintenance
 import org.etcd4s.pb.etcdserverpb.WatchGrpc.Watch
 import org.etcd4s.pb.etcdserverpb._
+import org.etcd4s.pb.v3electionpb.ElectionGrpc.Election
+import org.etcd4s.pb.v3electionpb.{LeaderRequest, LeaderResponse}
 
 package object akkasupport {
 
@@ -23,6 +25,11 @@ package object akkasupport {
   implicit class WatchServiceWithAkkaSupport(watchService: Watch) {
     val watchFlow: Flow[WatchRequest, WatchResponse, NotUsed] =
       getBidiFlow(watchService.watch)
+  }
+
+  implicit class ElectionServiceAkkaSupport(electionService: Election) {
+    def observe(request: LeaderRequest): Source[LeaderResponse, NotUsed] =
+      getServerStreamingFLow(request)(electionService.observe)
   }
 
 }

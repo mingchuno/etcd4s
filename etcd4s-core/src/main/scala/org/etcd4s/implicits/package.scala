@@ -3,8 +3,6 @@ package org.etcd4s
 import com.google.protobuf.ByteString
 import org.etcd4s.pb.etcdserverpb.{DeleteRangeRequest, RangeRequest}
 
-import scala.collection.mutable.ArrayBuffer
-
 package object implicits extends ByteStringOps with StringOps with RequestPrefixOps
 
 trait ByteStringOps {
