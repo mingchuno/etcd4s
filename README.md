@@ -2,6 +2,8 @@
 
 [![Build Status](https://travis-ci.org/mingchuno/etcd4s.svg?branch=master)](https://travis-ci.org/mingchuno/etcd4s)
 
+The whole project is still WIP!!!
+
 A Scala etcd client implementing V3 API using gRPC and ScalaPB with optional Akka Stream support.
 
 ## Overview
