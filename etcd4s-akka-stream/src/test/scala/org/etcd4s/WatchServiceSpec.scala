@@ -15,6 +15,7 @@ import scala.concurrent.duration._
 class WatchServiceSpec extends TestKit(ActorSystem("WatchServiceSpec")) with Etcd4sFeatureSpec with BeforeAndAfterAll {
 
   override def afterAll() = {
+    super.afterAll()
     TestKit.shutdownActorSystem(system)
   }
 

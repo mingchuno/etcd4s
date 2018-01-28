@@ -1,5 +1,7 @@
 package org.etcd4s
 
+import java.util.concurrent.TimeUnit
+
 import io.grpc._
 import io.grpc.netty.NettyChannelBuilder
 import io.grpc.stub.MetadataUtils
@@ -53,6 +55,11 @@ private[etcd4s] class Etcd4sClient(val channel: ManagedChannel) {
   val maintenanceService = new MaintenanceService(MaintenanceGrpc.stub(channel))
   val lockService = new LockService(LockGrpc.stub(channel))
   val electionService = new ElectionService(ElectionGrpc.stub(channel))
+
+  def shutdown() = {
+    channel.shutdown()
+    channel.awaitTermination(5, TimeUnit.SECONDS)
+  }
 }
 
 object Etcd4sClient {
