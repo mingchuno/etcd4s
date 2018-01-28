@@ -2,9 +2,7 @@
 
 [![Build Status](https://travis-ci.org/mingchuno/etcd4s.svg?branch=master)](https://travis-ci.org/mingchuno/etcd4s)
 
-The whole project is still WIP!!!
-
-A Scala etcd client implementing V3 API using gRPC and ScalaPB with optional Akka Stream support.
+A Scala etcd client implementing V3 API using gRPC and ScalaPB with optional Akka Stream support. This lib is basically usable now but still need more testing
 
 ## Overview
 
@@ -22,45 +20,41 @@ Note that this library do not support gRPC json gateway and use raw gRPC call in
 TODO: install
 
 ```scala
-import java.util.concurrent.TimeUnit
-import io.grpc.ManagedChannelBuilder
+import org.etcd4s.{Etcd4sClientConfig, Etcd4sClient}
 import org.etcd4s.implicits._
 import org.etcd4s.pb.etcdserverpb._
 
 // create the client
-protected val client = {
-  // this is directly from io.grpc.ManagedChannelBuilder
-  val channel = ManagedChannelBuilder.forAddress("127.0.0.1", 2379).usePlaintext(true).build()
-  new Etcd4sClient(channel)
-}
+val config = Etcd4sClientConfig(
+  address = "127.0.0.1",
+  port = 2379
+)
+val client = Etcd4sClient.newClient(config)
 
 // set a key
-client.kvService.put(PutRequest().withKey("foo").withValue("bar")) // return a Future
+client.kvService.setKey("foo", "bar") // return a Future
 
 // get a key
-val responseF: Future[RangeResponse] = client.kvService.range(RangeRequest().withKey("foo"))
-responseF.foreach { result =>
-  val value: String = result.kvs.head.value
-  assert(value == "bar")
+client.kvService.getKey("foo").foreach { result =>
+  assert(result == "bar")
 }
 
 // delete a key
-client.kvService.deleteRange(DeleteRangeRequest().withKey("foo")).foreach { result =>
-  assert(result.deleted == 1)
+client.kvService.deleteKey("foo").foreach { result =>
+  assert(result == 1)
 }
 
 // set more key
-client.kvService.put(PutRequest().withKey("foo/bar").withValue("Hello"))
-client.kvService.put(PutRequest().withKey("foo/baz").withValue("World"))
+client.kvService.setKey("foo/bar", "Hello")
+client.kvService.setKey("foo/baz", "World")
 
 // get keys with range
-client.kvService.range(RangeRequest().withPrefix("foo/")).foreach { result =>
+client.kvService.getRange("foo/").foreach { result =>
   assert(result.count == 2)
 }
 
-// remember to shutdown the channel
-client.channel.shutdown()
-client.channel.awaitTermination(5, TimeUnit.SECONDS)
+// remember to shutdown the client
+client.shutdown()
 ```
 
 If you want the Akka Stream support for the stream APIs, you should add the `etcd4s-akka-stream` depns into your `build.sbt`
@@ -90,6 +84,7 @@ More example usage under the test dir in the repo.
 * A working etcd on your localhost with:
   - `ETCD_LISTEN_CLIENT_URLS=http://0.0.0.0:2379` and
   - `ETCD_ADVERTISE_CLIENT_URLS=http://localhost:2379`
+  - for example: `docker run -d -p 127.0.0.1:2379:2379 -e ETCD_LISTEN_CLIENT_URLS=http://0.0.0.0:2379 -e ETCD_ADVERTISE_CLIENT_URLS=http://localhost:2379 quay.io/coreos/etcd:v3.2.10`
 
 ### How to start?
 
