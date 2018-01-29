@@ -20,7 +20,7 @@ class AuthServiceSpec extends Etcd4sFeatureSpec {
     scenario("should be able the call api") {
       val authClient = getAuthClient
       authClient.kvService.setKey("foo", "bar").futureValue
-      val value: String = authClient.kvService.getKey("foo").futureValue
+      val value: String = authClient.kvService.getKey("foo").futureValue.get
       info(s"value is:$value")
       value shouldBe "bar"
 

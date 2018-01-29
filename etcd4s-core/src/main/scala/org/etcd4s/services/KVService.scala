@@ -4,23 +4,27 @@ import org.etcd4s.formats._
 import org.etcd4s.implicits._
 import org.etcd4s.pb.etcdserverpb.KVGrpc.{KV, KVStub}
 import org.etcd4s.pb.etcdserverpb._
+import org.etcd4s.pb.mvccpb.KeyValue
 
 import scala.concurrent.{ExecutionContext, Future}
 
 private[etcd4s] class KVService(protected val stub: KVStub) extends KV {
 
-  def getKey[K,V](key: K)(implicit read: Read[V], write: Write[K], ec: ExecutionContext): Future[V] = {
+  def getKey[K,V](key: K)(implicit read: Read[V], write: Write[K], ec: ExecutionContext): Future[Option[V]] = {
     range(RangeRequest().withKey(write.write(key)))
-      .map(_.kvs.head.value) // NoSuchElement
-      .map(read.read)
+      .map(_.kvs)
+      .map { kvs =>
+        if (kvs.isEmpty) None else Some(read.read(kvs.head.value))
+      }
   }
 
   def getRange[K](key: K)(implicit write: Write[K], ec: ExecutionContext): Future[RangeResponse] = {
     range(RangeRequest().withPrefix(write.write(key)))
   }
 
-  def setKey[K,V](key: K, value: V)(implicit writeK: Write[K], writeV: Write[V], ec: ExecutionContext): Future[PutResponse] = {
+  def setKey[K,V](key: K, value: V)(implicit writeK: Write[K], writeV: Write[V], ec: ExecutionContext): Future[Option[KeyValue]] = {
     put(PutRequest(key = writeK.write(key), value = writeV.write(value)))
+      .map(_.prevKv)
   }
 
   def deleteKey[K](key: K)(implicit write: Write[K], ec: ExecutionContext): Future[Long] = {
