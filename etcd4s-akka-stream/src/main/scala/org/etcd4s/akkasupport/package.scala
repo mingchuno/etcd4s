@@ -12,24 +12,24 @@ import org.etcd4s.pb.v3electionpb.{LeaderRequest, LeaderResponse}
 
 package object akkasupport {
 
-  implicit class LeaseServiceWithAkkaSupport(leaseService: Lease) {
+  implicit class LeaseServiceWithAkkaSupport(lease: Lease) {
     val leaseKeepAliveFlow: Flow[LeaseKeepAliveRequest, LeaseKeepAliveResponse, NotUsed] =
-      getBidiFlow(leaseService.leaseKeepAlive)
+      getBidiFlow(lease.leaseKeepAlive)
   }
 
-  implicit class MaintenanceServiceWithAkkaSupport(maintenanceService: Maintenance) {
+  implicit class MaintenanceServiceWithAkkaSupport(maintenance: Maintenance) {
     def snapshotSource(request: SnapshotRequest): Source[SnapshotResponse, NotUsed] =
-      getServerStreamingFLow(request)(maintenanceService.snapshot)
+      getServerStreamingFLow(request)(maintenance.snapshot)
   }
 
-  implicit class WatchServiceWithAkkaSupport(watchService: Watch) {
+  implicit class WatchServiceWithAkkaSupport(watch: Watch) {
     val watchFlow: Flow[WatchRequest, WatchResponse, NotUsed] =
-      getBidiFlow(watchService.watch)
+      getBidiFlow(watch.watch)
   }
 
-  implicit class ElectionServiceAkkaSupport(electionService: Election) {
+  implicit class ElectionServiceAkkaSupport(election: Election) {
     def observe(request: LeaderRequest): Source[LeaderResponse, NotUsed] =
-      getServerStreamingFLow(request)(electionService.observe)
+      getServerStreamingFLow(request)(election.observe)
   }
 
 }

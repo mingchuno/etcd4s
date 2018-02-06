@@ -16,51 +16,51 @@ class KVServiceSpec extends Etcd4sFeatureSpec {
     val VALUE_2 = "World"
 
     scenario(s"remove '$KEY'") {
-      client.kvService.deleteRange(DeleteRangeRequest().withKey(KEY)).futureValue
+      client.rpcClient.kvRpc.deleteRange(DeleteRangeRequest().withKey(KEY)).futureValue
     }
 
     scenario(s"set '$KEY' to '$VALUE_1'") {
-      client.kvService.put(PutRequest().withKey(KEY).withValue(VALUE_1)).futureValue
+      client.rpcClient.kvRpc.put(PutRequest().withKey(KEY).withValue(VALUE_1)).futureValue
     }
 
     scenario(s"get '$KEY' should be '$VALUE_1'") {
-      val result = client.kvService.range(RangeRequest().withKey(KEY)).futureValue
+      val result = client.rpcClient.kvRpc.range(RangeRequest().withKey(KEY)).futureValue
       result.count shouldBe 1
       result.more shouldBe false
       (result.kvs.head.value: String) shouldBe VALUE_1
     }
 
     scenario(s"update '$KEY' to '$VALUE_2'") {
-      client.kvService.put(PutRequest().withKey(KEY).withValue(VALUE_2)).futureValue
+      client.rpcClient.kvRpc.put(PutRequest().withKey(KEY).withValue(VALUE_2)).futureValue
     }
 
     scenario(s"get '$KEY' should be '$VALUE_2'") {
-      val result = client.kvService.range(RangeRequest().withKey(KEY)).futureValue
+      val result = client.rpcClient.kvRpc.range(RangeRequest().withKey(KEY)).futureValue
       result.count shouldBe 1
       result.more shouldBe false
       (result.kvs.head.value: String) shouldBe VALUE_2
     }
 
     scenario(s"remove '$KEY' should have 1 key") {
-      client.kvService.deleteRange(DeleteRangeRequest().withKey(KEY)).futureValue.deleted shouldBe 1
+      client.rpcClient.kvRpc.deleteRange(DeleteRangeRequest().withKey(KEY)).futureValue.deleted shouldBe 1
     }
 
     scenario(s"get '$KEY' should be empty") {
-      client.kvService.range(RangeRequest().withKey(KEY)).futureValue.count shouldBe 0
+      client.rpcClient.kvRpc.range(RangeRequest().withKey(KEY)).futureValue.count shouldBe 0
     }
   }
 
   feature("KV api with range of keys") {
     scenario("set a rage of keys in the same key space and get them out") {
       info("remove all key under foo/ first")
-      client.kvService.deleteRange(DeleteRangeRequest().withPrefix("foo/")).futureValue
+      client.rpcClient.kvRpc.deleteRange(DeleteRangeRequest().withPrefix("foo/")).futureValue
 
       info("add 2 keys under foo/")
-      client.kvService.put(PutRequest().withKey("foo/bar1").withValue("Hello")).futureValue
-      client.kvService.put(PutRequest().withKey("foo/bar2").withValue("World")).futureValue
+      client.rpcClient.kvRpc.put(PutRequest().withKey("foo/bar1").withValue("Hello")).futureValue
+      client.rpcClient.kvRpc.put(PutRequest().withKey("foo/bar2").withValue("World")).futureValue
 
       info("get them and check")
-      val result = client.kvService.range(RangeRequest().withPrefix("foo/")).futureValue
+      val result = client.rpcClient.kvRpc.range(RangeRequest().withPrefix("foo/")).futureValue
       result.count shouldBe 2
       result.more shouldBe false
       (result.kvs.map(_.key: String): Seq[String]) shouldBe Seq("foo/bar1", "foo/bar2")

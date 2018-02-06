@@ -1,9 +1,9 @@
-package org.etcd4s.services
+package org.etcd4s.rpc
 
 import org.etcd4s.pb.v3lockpb.LockGrpc.{Lock, LockStub}
 import org.etcd4s.pb.v3lockpb._
 
-private[etcd4s] class LockService(protected val stub: LockStub) extends Lock {
+private[etcd4s] class LockRpc(protected val stub: LockStub) extends Lock {
 
   override def lock(request: LockRequest) = stub.lock(request)
 

@@ -20,7 +20,7 @@ trait Etcd4sFeatureSpec extends FeatureSpecLike with Matchers with ScalaFutures 
       address = "127.0.0.1",
       port = 2379
     )
-    Etcd4sClient.newClient(config)
+    Ectd4sClient.newClient(config)
   }
 
   def getAuthClient = {
@@ -28,7 +28,7 @@ trait Etcd4sFeatureSpec extends FeatureSpecLike with Matchers with ScalaFutures 
       address = "127.0.0.1",
       port = 2379
     ).withCredential("root", "Admin123")
-    Etcd4sClient.newClient(config)
+    Ectd4sClient.newClient(config)
   }
 
 }

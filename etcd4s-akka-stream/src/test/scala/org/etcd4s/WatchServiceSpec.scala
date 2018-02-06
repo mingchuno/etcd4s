@@ -6,6 +6,7 @@ import akka.stream.scaladsl.Keep
 import akka.stream.testkit.scaladsl.{TestSink, TestSource}
 import akka.testkit.TestKit
 import org.etcd4s.akkasupport._
+import org.etcd4s.formats.Formats._
 import org.etcd4s.implicits._
 import org.etcd4s.pb.etcdserverpb._
 import org.scalatest.BeforeAndAfterAll
@@ -28,10 +29,10 @@ class WatchServiceSpec extends TestKit(ActorSystem("WatchServiceSpec")) with Etc
       val timeout = 3 seconds
 
       info("delete key")
-      client.kvService.deleteRange(DeleteRangeRequest().withKey(KEY)).futureValue
+      client.kvService.deleteKey(KEY).futureValue
 
       info("make the stream")
-      val flowUnderTest = client.watchService.watchFlow
+      val flowUnderTest = client.rpcClient.watchRpc.watchFlow
       val (pub, sub) = TestSource.probe[WatchRequest]
         .via(flowUnderTest)
         .toMat(TestSink.probe[WatchResponse])(Keep.both)
@@ -47,9 +48,9 @@ class WatchServiceSpec extends TestKit(ActorSystem("WatchServiceSpec")) with Etc
 
       info("change some key")
       sub.request(n = 3)
-      client.kvService.put(PutRequest().withKey(KEY).withValue("bar1")).futureValue
-      client.kvService.put(PutRequest().withKey(KEY).withValue("bar2")).futureValue
-      client.kvService.put(PutRequest().withKey(KEY).withValue("bar3")).futureValue
+      client.kvService.setKey(KEY, "bar1").futureValue
+      client.kvService.setKey(KEY, "bar2").futureValue
+      client.kvService.setKey(KEY, "bar3").futureValue
 
       info("check receive event")
       sub.expectNextN(3).map(_.events.head.kv.get.value).toList.map(x => x: String) shouldBe List("bar1", "bar2", "bar3")

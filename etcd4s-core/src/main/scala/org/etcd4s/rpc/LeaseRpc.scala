@@ -1,10 +1,10 @@
-package org.etcd4s.services
+package org.etcd4s.rpc
 
 import org.etcd4s.pb.etcdserverpb.LeaseGrpc.{Lease, LeaseStub}
 import org.etcd4s.pb.etcdserverpb._
 import io.grpc.stub.StreamObserver
 
-private[etcd4s] class LeaseService(protected val stub: LeaseStub) extends Lease {
+private[etcd4s] class LeaseRpc(protected val stub: LeaseStub) extends Lease {
 
   override def leaseGrant(request: LeaseGrantRequest) = stub.leaseGrant(request)
 

@@ -8,10 +8,11 @@ import io.grpc.stub.MetadataUtils
 import org.etcd4s.pb.etcdserverpb._
 import org.etcd4s.pb.v3electionpb.ElectionGrpc
 import org.etcd4s.pb.v3lockpb.LockGrpc
-import org.etcd4s.services._
+import org.etcd4s.rpc._
+import org.etcd4s.services.{AuthService, ClusterService, KVService}
 
-import scala.concurrent.{Await, ExecutionContext}
 import scala.concurrent.duration._
+import scala.concurrent.{Await, ExecutionContext}
 
 private[etcd4s] class EtcdChannelBuilder(config: Etcd4sClientConfig) {
   def build()(implicit ec: ExecutionContext): ManagedChannel = {
@@ -23,7 +24,8 @@ private[etcd4s] class EtcdChannelBuilder(config: Etcd4sClientConfig) {
     }
     if (config.credential.isDefined) {
       val tempChannel = builder.build()
-      val authService = new AuthService(AuthGrpc.stub(tempChannel))
+      val authRpc = new AuthRpc(AuthGrpc.stub(tempChannel))
+      val authService = new AuthService(authRpc)
       val username = config.credential.get.user
       val password = config.credential.get.password
       val f = authService.authenticate(name = username, password = password)
@@ -46,15 +48,15 @@ private[etcd4s] class EtcdChannelBuilder(config: Etcd4sClientConfig) {
   }
 }
 
-private[etcd4s] class Etcd4sClient(val channel: ManagedChannel) {
-  val kvService = new KVService(KVGrpc.stub(channel))
-  val clusterService = new ClusterService(ClusterGrpc.stub(channel))
-  val authService = new AuthService(AuthGrpc.stub(channel))
-  val leaseService = new LeaseService(LeaseGrpc.stub(channel))
-  val watchService = new WatchService(WatchGrpc.stub(channel))
-  val maintenanceService = new MaintenanceService(MaintenanceGrpc.stub(channel))
-  val lockService = new LockService(LockGrpc.stub(channel))
-  val electionService = new ElectionService(ElectionGrpc.stub(channel))
+private[etcd4s] class Etcd4sRpcClient(val channel: ManagedChannel) {
+  val kvRpc = new KVRpc(KVGrpc.stub(channel))
+  val clusterRpc = new ClusterRpc(ClusterGrpc.stub(channel))
+  val authRpc = new AuthRpc(AuthGrpc.stub(channel))
+  val leaseRpc = new LeaseRpc(LeaseGrpc.stub(channel))
+  val watchRpc = new WatchRpc(WatchGrpc.stub(channel))
+  val maintenanceRpc = new MaintenanceRpc(MaintenanceGrpc.stub(channel))
+  val lockRpc = new LockRpc(LockGrpc.stub(channel))
+  val electionRpc = new ElectionRpc(ElectionGrpc.stub(channel))
 
   def shutdown() = {
     channel.shutdown()
@@ -62,8 +64,27 @@ private[etcd4s] class Etcd4sClient(val channel: ManagedChannel) {
   }
 }
 
-object Etcd4sClient {
-  def newClient(config: Etcd4sClientConfig)(implicit ec: ExecutionContext): Etcd4sClient = {
-    new Etcd4sClient(new EtcdChannelBuilder(config).build())
+object Etcd4sRpcClient {
+  def newClient(config: Etcd4sClientConfig)(implicit ec: ExecutionContext): Etcd4sRpcClient = {
+    new Etcd4sRpcClient(new EtcdChannelBuilder(config).build())
+  }
+}
+
+private[etcd4s] class Ectd4sClient(val rpcClient: Etcd4sRpcClient) {
+
+  val authService = new AuthService(rpcClient.authRpc)
+  val clusterService = new ClusterService(rpcClient.clusterRpc)
+  val kvService = new KVService(rpcClient.kvRpc)
+
+  def shutdown() = {
+    rpcClient.shutdown()
+  }
+
+}
+
+object Ectd4sClient {
+  def newClient(config: Etcd4sClientConfig)(implicit ec: ExecutionContext): Ectd4sClient = {
+    val rpcClient = Etcd4sRpcClient.newClient(config)
+    new Ectd4sClient(rpcClient)
   }
 }

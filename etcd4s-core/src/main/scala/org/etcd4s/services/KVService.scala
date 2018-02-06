@@ -1,17 +1,18 @@
+// Copyright (C) 2015-2018 Harborx Limited.
 package org.etcd4s.services
 
-import org.etcd4s.formats._
-import org.etcd4s.implicits._
-import org.etcd4s.pb.etcdserverpb.KVGrpc.{KV, KVStub}
+import org.etcd4s.formats.{Read, Write}
 import org.etcd4s.pb.etcdserverpb._
 import org.etcd4s.pb.mvccpb.KeyValue
+import org.etcd4s.rpc.KVRpc
+import org.etcd4s.implicits._
 
 import scala.concurrent.{ExecutionContext, Future}
 
-private[etcd4s] class KVService(protected val stub: KVStub) extends KV {
+private[etcd4s] class KVService(protected val kVRpc: KVRpc) {
 
   def getKey[K,V](key: K)(implicit read: Read[V], write: Write[K], ec: ExecutionContext): Future[Option[V]] = {
-    range(RangeRequest().withKey(write.write(key)))
+    kVRpc.range(RangeRequest().withKey(write.write(key)))
       .map(_.kvs)
       .map { kvs =>
         if (kvs.isEmpty) None else Some(read.read(kvs.head.value))
@@ -19,43 +20,27 @@ private[etcd4s] class KVService(protected val stub: KVStub) extends KV {
   }
 
   def getRange[K](key: K)(implicit write: Write[K], ec: ExecutionContext): Future[RangeResponse] = {
-    range(RangeRequest().withPrefix(write.write(key)))
+    kVRpc.range(RangeRequest().withPrefix(write.write(key)))
   }
 
   def setKey[K,V](key: K, value: V)(implicit writeK: Write[K], writeV: Write[V], ec: ExecutionContext): Future[Option[KeyValue]] = {
-    put(PutRequest(key = writeK.write(key), value = writeV.write(value)))
+    kVRpc.put(PutRequest(key = writeK.write(key), value = writeV.write(value)))
       .map(_.prevKv)
   }
 
   def deleteKey[K](key: K)(implicit write: Write[K], ec: ExecutionContext): Future[Long] = {
-    deleteRange(DeleteRangeRequest(key = write.write(key))).map(_.deleted)
+    kVRpc.deleteRange(DeleteRangeRequest(key = write.write(key))).map(_.deleted)
   }
 
   def deleteRange[K](key: K)(implicit write: Write[K], ec: ExecutionContext): Future[Long] = {
-    deleteRange(DeleteRangeRequest().withPrefix(write.write(key))).map(_.deleted)
+    kVRpc.deleteRange(DeleteRangeRequest().withPrefix(write.write(key))).map(_.deleted)
   }
 
-  override def range(request: RangeRequest): Future[RangeResponse] = {
-    stub.range(request)
-  }
-
-  override def put(request: PutRequest): Future[PutResponse] = {
-    stub.put(request)
-  }
-
-  override def deleteRange(request: DeleteRangeRequest): Future[DeleteRangeResponse] = {
-    stub.deleteRange(request)
-  }
-
-  override def txn(request: TxnRequest): Future[TxnResponse] = {
-    stub.txn(request)
-  }
-
-  override def compact(request: CompactionRequest): Future[CompactionResponse] = {
-    stub.compact(request)
+  def txn(request: TxnRequest): Future[TxnResponse] = {
+    kVRpc.txn(request)
   }
 
   def compact(revision: Long, physical: Boolean): Future[CompactionResponse] = {
-    compact(CompactionRequest(revision, physical))
+    kVRpc.compact(CompactionRequest(revision, physical))
   }
 }

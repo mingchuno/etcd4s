@@ -1,4 +1,4 @@
-package org.etcd4s.services
+package org.etcd4s.rpc
 
 import org.etcd4s.pb.etcdserverpb.MaintenanceGrpc.{Maintenance, MaintenanceStub}
 import org.etcd4s.pb.etcdserverpb._
@@ -6,7 +6,7 @@ import io.grpc.stub.StreamObserver
 
 import scala.concurrent.Future
 
-private[etcd4s] class MaintenanceService(protected val stub: MaintenanceStub) extends Maintenance {
+private[etcd4s] class MaintenanceRpc(protected val stub: MaintenanceStub) extends Maintenance {
   override def alarm(request: AlarmRequest): Future[AlarmResponse] = stub.alarm(request)
 
   override def status(request: StatusRequest): Future[StatusResponse] = stub.status(request)

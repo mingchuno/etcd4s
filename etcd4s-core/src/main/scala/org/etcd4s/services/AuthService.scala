@@ -1,108 +1,75 @@
+// Copyright (C) 2015-2018 Harborx Limited.
 package org.etcd4s.services
 
 import org.etcd4s.pb.authpb.Permission
-import org.etcd4s.pb.etcdserverpb.AuthGrpc.{Auth, AuthStub}
 import org.etcd4s.pb.etcdserverpb._
+import org.etcd4s.rpc.AuthRpc
 
 import scala.concurrent.{ExecutionContext, Future}
 
-private[etcd4s] class AuthService(protected val stub: AuthStub) extends Auth {
-
-  override def authEnable(request: AuthEnableRequest) = stub.authEnable(request)
-
+private[etcd4s] class AuthService(protected val authRpc: AuthRpc) {
   def authEnable(): Future[AuthEnableResponse] = {
-    authEnable(AuthEnableRequest())
+    authRpc.authEnable(AuthEnableRequest())
   }
-
-  override def authDisable(request: AuthDisableRequest) = stub.authDisable(request)
 
   def authDisable(): Future[AuthDisableResponse] = {
-    authDisable(AuthDisableRequest())
+    authRpc.authDisable(AuthDisableRequest())
   }
 
-  override def authenticate(request: AuthenticateRequest) = stub.authenticate(request)
-
   def authenticate(name: String, password: String)(implicit ec: ExecutionContext): Future[String] = {
-    authenticate(AuthenticateRequest(name = name, password = password))
+    authRpc.authenticate(AuthenticateRequest(name = name, password = password))
       .map(_.token)
   }
 
-  override def userAdd(request: AuthUserAddRequest) = stub.userAdd(request)
-
   def userAdd(name: String, password: String): Future[AuthUserAddResponse] = {
-    userAdd(AuthUserAddRequest(name = name, password = password))
+    authRpc.userAdd(AuthUserAddRequest(name = name, password = password))
   }
-
-  override def userGet(request: AuthUserGetRequest) = stub.userGet(request)
 
   def userGet(name: String)(implicit ec: ExecutionContext): Future[Seq[String]] = {
-    userGet(AuthUserGetRequest(name = name)).map(_.roles)
+    authRpc.userGet(AuthUserGetRequest(name = name)).map(_.roles)
   }
-
-  override def userList(request: AuthUserListRequest) = stub.userList(request)
 
   def userList()(implicit ec: ExecutionContext): Future[Seq[String]] = {
-    userList(AuthUserListRequest()).map(_.users)
+    authRpc.userList(AuthUserListRequest()).map(_.users)
   }
-
-  override def userDelete(request: AuthUserDeleteRequest) = stub.userDelete(request)
 
   def userDelete(name: String): Future[AuthUserDeleteResponse] = {
-    userDelete(AuthUserDeleteRequest(name = name))
+    authRpc.userDelete(AuthUserDeleteRequest(name = name))
   }
-
-  override def userChangePassword(request: AuthUserChangePasswordRequest) = stub.userChangePassword(request)
 
   def userChangePassword(name: String, password: String): Future[AuthUserChangePasswordResponse] = {
-    userChangePassword(AuthUserChangePasswordRequest(name = name, password = password))
+    authRpc.userChangePassword(AuthUserChangePasswordRequest(name = name, password = password))
   }
-
-  override def userGrantRole(request: AuthUserGrantRoleRequest) = stub.userGrantRole(request)
 
   def userGrantRole(user: String, role: String): Future[AuthUserGrantRoleResponse] = {
-    userGrantRole(AuthUserGrantRoleRequest(user = user, role = role))
+    authRpc.userGrantRole(AuthUserGrantRoleRequest(user = user, role = role))
   }
-
-  override def userRevokeRole(request: AuthUserRevokeRoleRequest) = stub.userRevokeRole(request)
 
   def userRevokeRole(name: String, role: String): Future[AuthUserRevokeRoleResponse] = {
-    userRevokeRole(AuthUserRevokeRoleRequest(name = name, role = role))
+    authRpc.userRevokeRole(AuthUserRevokeRoleRequest(name = name, role = role))
   }
-
-  override def roleAdd(request: AuthRoleAddRequest) = stub.roleAdd(request)
 
   def roleAdd(name: String): Future[AuthRoleAddResponse] = {
-    roleAdd(AuthRoleAddRequest(name = name))
+    authRpc.roleAdd(AuthRoleAddRequest(name = name))
   }
-
-  override def roleGet(request: AuthRoleGetRequest) = stub.roleGet(request)
 
   def roleGet(role: String)(implicit ec: ExecutionContext): Future[Seq[Permission]] = {
-    roleGet(AuthRoleGetRequest(role)).map(_.perm)
+    authRpc.roleGet(AuthRoleGetRequest(role)).map(_.perm)
   }
-
-  override def roleList(request: AuthRoleListRequest) = stub.roleList(request)
 
   def roleList()(implicit ec: ExecutionContext): Future[Seq[String]] = {
-    roleList(AuthRoleListRequest()).map(_.roles)
+    authRpc.roleList(AuthRoleListRequest()).map(_.roles)
   }
-
-  override def roleDelete(request: AuthRoleDeleteRequest) = stub.roleDelete(request)
 
   def roleDelete(role: String): Future[AuthRoleDeleteResponse] = {
-    roleDelete(AuthRoleDeleteRequest(role = role))
+    authRpc.roleDelete(AuthRoleDeleteRequest(role = role))
   }
-
-  override def roleGrantPermission(request: AuthRoleGrantPermissionRequest) = stub.roleGrantPermission(request)
 
   def roleGrantPermission(role: String, perm: Permission): Future[AuthRoleGrantPermissionResponse] = {
-    roleGrantPermission(AuthRoleGrantPermissionRequest(role, Some(perm)))
+    authRpc.roleGrantPermission(AuthRoleGrantPermissionRequest(role, Some(perm)))
   }
-
-  override def roleRevokePermission(request: AuthRoleRevokePermissionRequest) = stub.roleRevokePermission(request)
 
   def roleRevokePermission(role: String, key: String, rangeEnd: String): Future[AuthRoleRevokePermissionResponse] = {
-    roleRevokePermission(AuthRoleRevokePermissionRequest(role = role, key = key, rangeEnd = rangeEnd))
+    authRpc.roleRevokePermission(AuthRoleRevokePermissionRequest(role = role, key = key, rangeEnd = rangeEnd))
   }
-
 }
