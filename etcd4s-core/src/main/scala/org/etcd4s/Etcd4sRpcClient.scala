@@ -9,7 +9,7 @@ import org.etcd4s.pb.etcdserverpb._
 import org.etcd4s.pb.v3electionpb.ElectionGrpc
 import org.etcd4s.pb.v3lockpb.LockGrpc
 import org.etcd4s.rpc._
-import org.etcd4s.services.{AuthService, ClusterService, KVService}
+import org.etcd4s.services.{AuthService, ClusterService, KVService, LockService}
 
 import scala.concurrent.duration._
 import scala.concurrent.{Await, ExecutionContext}
@@ -75,6 +75,7 @@ private[etcd4s] class Ectd4sClient(val rpcClient: Etcd4sRpcClient) {
   val authService = new AuthService(rpcClient.authRpc)
   val clusterService = new ClusterService(rpcClient.clusterRpc)
   val kvService = new KVService(rpcClient.kvRpc)
+  val lockService = new LockService(rpcClient.lockRpc)
 
   def shutdown() = {
     rpcClient.shutdown()
