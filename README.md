@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/mingchuno/etcd4s.svg?branch=master)](https://travis-ci.org/mingchuno/etcd4s)
 
-A Scala etcd client implementing V3 API using gRPC and ScalaPB with optional Akka Stream support. This lib is basically usable now but still need more testing
+A Scala etcd client implementing V3 API using gRPC and ScalaPB with optional Akka Stream support. This project is in Alpha stage with basic test coverage and usable APIs.
 
 ## Overview
 
@@ -12,17 +12,21 @@ This repo is a client library of [etcd](https://coreos.com/etcd/) implementing V
 * [etcd V3 API Reference](https://coreos.com/etcd/docs/latest/dev-guide/api_reference_v3.html)
 * [protobuf defination](https://github.com/mingchuno/etcd4s/tree/master/etcd4s-core/src/main/protobuf)
 
-
 Note that this library do not support gRPC json gateway and use raw gRPC call instead (underlying is java-grpc).
 
 ## Getting Started
 
 TODO: install
 
+## Usage
+
 ```scala
 import org.etcd4s.{Etcd4sClientConfig, Etcd4sClient}
 import org.etcd4s.implicits._
+import org.etcd4s.formats.Formats._
 import org.etcd4s.pb.etcdserverpb._
+
+import scala.concurrent.ExecutionContext.Implicits.global
 
 // create the client
 val config = Etcd4sClientConfig(
@@ -36,7 +40,7 @@ client.kvService.setKey("foo", "bar") // return a Future
 
 // get a key
 client.kvService.getKey("foo").foreach { result =>
-  assert(result == "bar")
+  assert(result == Some("bar"))
 }
 
 // delete a key
@@ -66,7 +70,7 @@ import org.etcd4s.pb.etcdserverpb._
 import akka.NotUsed
 
 // assume you have the implicit value and client need in the scope
-val flow: Flow[WatchRequest, WatchResponse, NotUsed] = client.watchService.watchFlow
+val flow: Flow[WatchRequest, WatchResponse, NotUsed] = client.rpcClient.watchRpc.watchFlow
 Source.single(WatchRequest().withCreateRequest(WatchCreateRequest().withKey("foo")))
   .via(flow)
   .runForeach { resp =>
@@ -84,7 +88,15 @@ More example usage under the test dir in the repo.
 * A working etcd on your localhost with:
   - `ETCD_LISTEN_CLIENT_URLS=http://0.0.0.0:2379` and
   - `ETCD_ADVERTISE_CLIENT_URLS=http://localhost:2379`
-  - for example: `docker run -d -p 127.0.0.1:2379:2379 -e ETCD_LISTEN_CLIENT_URLS=http://0.0.0.0:2379 -e ETCD_ADVERTISE_CLIENT_URLS=http://localhost:2379 quay.io/coreos/etcd:v3.2.10`
+
+For example
+
+```
+docker run -d -p 127.0.0.1:2379:2379 \
+  -e ETCD_LISTEN_CLIENT_URLS=http://0.0.0.0:2379 \
+  -e ETCD_ADVERTISE_CLIENT_URLS=http://localhost:2379 \
+  quay.io/coreos/etcd:v3.2.10
+```
 
 ### How to start?
 

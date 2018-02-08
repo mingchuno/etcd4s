@@ -70,7 +70,7 @@ object Etcd4sRpcClient {
   }
 }
 
-private[etcd4s] class Ectd4sClient(val rpcClient: Etcd4sRpcClient) {
+private[etcd4s] class Etcd4sClient(val rpcClient: Etcd4sRpcClient) {
 
   val authService = new AuthService(rpcClient.authRpc)
   val clusterService = new ClusterService(rpcClient.clusterRpc)
@@ -83,9 +83,9 @@ private[etcd4s] class Ectd4sClient(val rpcClient: Etcd4sRpcClient) {
 
 }
 
-object Ectd4sClient {
-  def newClient(config: Etcd4sClientConfig)(implicit ec: ExecutionContext): Ectd4sClient = {
+object Etcd4sClient {
+  def newClient(config: Etcd4sClientConfig)(implicit ec: ExecutionContext): Etcd4sClient = {
     val rpcClient = Etcd4sRpcClient.newClient(config)
-    new Ectd4sClient(rpcClient)
+    new Etcd4sClient(rpcClient)
   }
 }
