@@ -1,9 +1,10 @@
 import sbt._
 import Keys._
+import xerial.sbt.Sonatype._
 
 object build {
   val etcd4sSettings = Seq(
-    organization := "org.etcd4s",
+    organization := "com.github.mingchuno",
     scalaVersion := "2.12.4",
     version      := "0.1.0-SNAPSHOT",
     crossScalaVersions := Seq("2.11.12", "2.12.4"),
@@ -19,7 +20,8 @@ object build {
     ),
     parallelExecution in Test := false,
     fork in Test := true,
-    testOptions in Test += Tests.Argument("-oD")
+    testOptions in Test += Tests.Argument("-oD"),
+    publishTo := SonatypeKeys.sonatypePublishTo.value
   )
 
   // val noPublish = Seq(
