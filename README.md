@@ -101,3 +101,13 @@ docker run -d -p 127.0.0.1:2379:2379 \
 ### How to start?
 
 Simple! Just `sbt test`
+
+### Publish
+
+This is to remind me how to publish and may switch to `sbt-release` later
+
+1. make sure you have `~/.sbt/gpg/` ready with pub/sec key paris
+2. make sure you have `~/.sbt/1.0/sonatype.sbt` ready with credentials
+3. `sbt "+clean" "+compile"`
+4. `sbt "+publishSigned"`
+5. `sbt sonatypeReleaseAll`
