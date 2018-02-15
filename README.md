@@ -16,7 +16,17 @@ Note that this library do not support gRPC json gateway and use raw gRPC call in
 
 ## Getting Started
 
-TODO: install
+The core lib
+
+```scala
+"com.github.mingchuno" %% "etcd4s-core" % "0.1.4"
+```
+
+To include akka stream support for stream API
+
+```scala
+"com.github.mingchuno" %% "etcd4s-akka-stream" % "0.1.4"
+```
 
 ## Usage
 
