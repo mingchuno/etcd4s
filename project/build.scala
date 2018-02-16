@@ -31,7 +31,7 @@ object build {
       )
     ),
     developers := List(
-      Developer(id = "mingchuno", name = "Or Ming Chun", email = "mingchuno", url = url("https://github.com/mingchuno"))
+      Developer(id = "mingchuno", name = "Or Ming Chun", email = "mingchuno@gmail.com", url = url("https://github.com/mingchuno"))
     ),
     licenses := Seq("MIT" -> url("https://opensource.org/licenses/MIT"))
   )
