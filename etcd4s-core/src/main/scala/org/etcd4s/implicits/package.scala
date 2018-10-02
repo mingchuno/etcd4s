@@ -1,7 +1,7 @@
 package org.etcd4s
 
 import com.google.protobuf.ByteString
-import org.etcd4s.pb.etcdserverpb.{DeleteRangeRequest, RangeRequest}
+import org.etcd4s.pb.etcdserverpb.{DeleteRangeRequest, RangeRequest, WatchCreateRequest}
 
 package object implicits extends ByteStringOps with StringOps with RequestPrefixOps
 
@@ -41,6 +41,12 @@ trait RequestPrefixOps {
 
   implicit class DeleteRangeRequestOps(request: DeleteRangeRequest) {
     def withPrefix(__v: ByteString): DeleteRangeRequest = {
+      request.withKey(__v).withRangeEnd(getPrefix(__v))
+    }
+  }
+
+  implicit class WatchCreateRequestOps(request: WatchCreateRequest) {
+    def withPrefix(__v: ByteString): WatchCreateRequest = {
       request.withKey(__v).withRangeEnd(getPrefix(__v))
     }
   }
