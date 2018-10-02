@@ -20,7 +20,7 @@ private[etcd4s] class EtcdChannelBuilder(config: Etcd4sClientConfig) {
     if (config.sslContext.isDefined) {
       builder.sslContext(config.sslContext.get)
     } else {
-      builder.usePlaintext(true)
+      builder.usePlaintext()
     }
     if (config.credential.isDefined) {
       val tempChannel = builder.build()
