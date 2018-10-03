@@ -7,7 +7,7 @@ package object implicits extends ByteStringOps with StringOps with RequestPrefix
 
 trait ByteStringOps {
   implicit def decode(bytes: ByteString): String = {
-    new String(bytes.toByteArray)
+    bytes.toStringUtf8
   }
 }
 
