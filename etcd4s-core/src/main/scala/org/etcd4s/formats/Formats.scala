@@ -28,5 +28,3 @@ trait DefaultWriters {
     }
   }
 }
-
-object Formats extends DefaultWriters with DefaultReaders
