@@ -6,7 +6,7 @@ object build {
   val etcd4sSettings = Seq(
     organization := "com.github.mingchuno",
     scalaVersion := "2.12.7",
-    version      := "0.1.7",
+    version      := "0.1.8",
     crossScalaVersions := Seq("2.11.12", "2.12.7"),
     scalacOptions ++= Seq(
       "-unchecked",
