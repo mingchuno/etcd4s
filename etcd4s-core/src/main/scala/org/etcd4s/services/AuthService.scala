@@ -1,4 +1,3 @@
-// Copyright (C) 2015-2018 Harborx Limited.
 package org.etcd4s.services
 
 import org.etcd4s.pb.authpb.Permission
