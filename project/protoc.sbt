@@ -1,6 +1,5 @@
-addSbtPlugin("com.thesamet" % "sbt-protoc" % "0.99.18")
+addSbtPlugin("com.thesamet" % "sbt-protoc" % "0.99.19")
 
 libraryDependencies ++= Seq(
-  "com.github.os72" % "protoc-jar" % "3.6.0",
-  "com.thesamet.scalapb" %% "compilerplugin" % "0.8.0"
+  "com.thesamet.scalapb" %% "compilerplugin" % "0.8.2"
 )
