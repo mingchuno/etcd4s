@@ -1,6 +1,6 @@
 package org.etcd4s
 
-import org.etcd4s.formats.Formats._
+import org.etcd4s.formats._
 import org.etcd4s.implicits._
 import org.etcd4s.pb.etcdserverpb._
 
