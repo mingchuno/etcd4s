@@ -123,7 +123,6 @@ class KVServiceSpec extends Etcd4sFeatureSpec {
       val map: Map[String, String] = result.kvs.map { kv =>
         (kv.key: String, kv.value: String)
       }.toMap
-      println(map)
       map shouldBe data
     }
 

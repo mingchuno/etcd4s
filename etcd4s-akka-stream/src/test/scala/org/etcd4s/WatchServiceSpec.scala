@@ -6,7 +6,7 @@ import akka.stream.scaladsl.Keep
 import akka.stream.testkit.scaladsl.{TestSink, TestSource}
 import akka.testkit.TestKit
 import org.etcd4s.akkasupport._
-import org.etcd4s.formats.Formats._
+import org.etcd4s.formats._
 import org.etcd4s.implicits._
 import org.etcd4s.pb.etcdserverpb._
 import org.scalatest.BeforeAndAfterAll

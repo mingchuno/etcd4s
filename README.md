@@ -33,7 +33,7 @@ libraryDependencies += "com.github.mingchuno" %% "etcd4s-akka-stream" % "0.1.4"
 ```scala
 import org.etcd4s.{Etcd4sClientConfig, Etcd4sClient}
 import org.etcd4s.implicits._
-import org.etcd4s.formats.Formats._
+import org.etcd4s.formats._
 import org.etcd4s.pb.etcdserverpb._
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -94,18 +94,11 @@ More example usage under the test dir in the repo.
 
 ### Requirment
 
-* Java 8+, Scala 12.11.X+ and sbt
-* A working etcd on your localhost with:
-  - `ETCD_LISTEN_CLIENT_URLS=http://0.0.0.0:2379` and
-  - `ETCD_ADVERTISE_CLIENT_URLS=http://localhost:2379`
+* Java 8+, Scala 12.11.X+, sbt and docker
 
-For example
-
-```
-docker run -d -p 127.0.0.1:2379:2379 \
-  -e ETCD_LISTEN_CLIENT_URLS=http://0.0.0.0:2379 \
-  -e ETCD_ADVERTISE_CLIENT_URLS=http://localhost:2379 \
-  quay.io/coreos/etcd:v3.2.10
+```bash
+# to start a background etcd for development
+docker-compose up -d
 ```
 
 ### How to start?

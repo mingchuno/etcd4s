@@ -1,6 +1,6 @@
 package org.etcd4s
 
-import org.etcd4s.formats.Formats._
+import org.etcd4s.formats._
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
