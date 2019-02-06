@@ -79,7 +79,7 @@ import org.etcd4s.implicits._
 import org.etcd4s.pb.etcdserverpb._
 import akka.NotUsed
 
-// assume you have the implicit value and client need in the scope
+// assume you have the implicit value and client needed in the scope
 val flow: Flow[WatchRequest, WatchResponse, NotUsed] = client.rpcClient.watchRpc.watchFlow
 Source.single(WatchRequest().withCreateRequest(WatchCreateRequest().withKey("foo")))
   .via(flow)
