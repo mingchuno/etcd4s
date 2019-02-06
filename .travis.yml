@@ -11,7 +11,7 @@ cache:
     - $HOME/.ivy2/cache
     - $HOME/.sbt/launchers
 before_install:
-  - docker-compose up -d && sleep 10
+  - docker-compose up -d
 script:
   - travis_retry sbt ++$TRAVIS_SCALA_VERSION test
 before_cache:
