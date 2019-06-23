@@ -14,7 +14,6 @@ lazy val core = Project(
   name := "etcd4s-core",
   libraryDependencies ++= coreDepns,
   coverageExcludedPackages := "org.etcd4s.pb.*",
-  PB.protocVersion := "-v360",
   PB.targets in Compile := Seq(
     scalapb.gen(
       flatPackage = true,

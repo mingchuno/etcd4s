@@ -5,9 +5,9 @@ import xerial.sbt.Sonatype._
 object build {
   val etcd4sSettings = Seq(
     organization := "com.github.mingchuno",
-    scalaVersion := "2.12.7",
+    scalaVersion := "2.12.8",
     version      := "0.2.0",
-    crossScalaVersions := Seq("2.11.12", "2.12.7"),
+    crossScalaVersions := Seq("2.11.12", "2.12.8", "2.13.0"),
     scalacOptions ++= Seq(
       "-unchecked",
       "-deprecation",
