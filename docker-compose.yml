@@ -2,7 +2,7 @@
 version: "3.2"
 services:
   etcd:
-    image: quay.io/coreos/etcd:v3.2.10
+    image: quay.io/coreos/etcd:v3.3.13
     ports:
       - target: 2379
         published: 2379
