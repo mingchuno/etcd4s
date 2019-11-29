@@ -42,7 +42,10 @@ class KVServiceSpec extends Etcd4sFeatureSpec {
     }
 
     scenario(s"remove '$KEY' should have 1 key") {
-      client.rpcClient.kvRpc.deleteRange(DeleteRangeRequest().withKey(KEY)).futureValue.deleted shouldBe 1
+      client.rpcClient.kvRpc
+        .deleteRange(DeleteRangeRequest().withKey(KEY))
+        .futureValue
+        .deleted shouldBe 1
     }
 
     scenario(s"get '$KEY' should be empty") {
@@ -111,8 +114,9 @@ class KVServiceSpec extends Etcd4sFeatureSpec {
     val data = Map("foo/1" -> "bar1", "foo/2" -> "bar2", "foo/3" -> "bar3")
 
     scenario("set multiple keys") {
-      data.foreach { case (k,v) =>
-        client.kvService.setKey(k, v).futureValue
+      data.foreach {
+        case (k, v) =>
+          client.kvService.setKey(k, v).futureValue
       }
     }
 

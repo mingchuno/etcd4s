@@ -6,7 +6,7 @@ import org.etcd4s.pb.v3electionpb._
 
 import scala.concurrent.Future
 
-private[etcd4s] class ElectionRpc(protected val stub: ElectionStub) extends Election  {
+private[etcd4s] class ElectionRpc(protected val stub: ElectionStub) extends Election {
   override def campaign(request: CampaignRequest): Future[CampaignResponse] =
     stub.campaign(request)
 
@@ -16,7 +16,10 @@ private[etcd4s] class ElectionRpc(protected val stub: ElectionStub) extends Elec
   override def leader(request: LeaderRequest): Future[LeaderResponse] =
     stub.leader(request)
 
-  override def observe(request: LeaderRequest, responseObserver: StreamObserver[LeaderResponse]): Unit =
+  override def observe(
+      request: LeaderRequest,
+      responseObserver: StreamObserver[LeaderResponse]
+  ): Unit =
     stub.observe(request, responseObserver)
 
   override def resign(request: ResignRequest): Future[ResignResponse] =

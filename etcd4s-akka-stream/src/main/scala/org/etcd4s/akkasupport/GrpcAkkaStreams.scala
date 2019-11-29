@@ -27,15 +27,18 @@ object GrpcAkkaStreams {
             getAsyncCallback((value: O) => emit(out, value)).invoke(value)
         }
         val inObs = operator(outObs)
-        setHandler(in, new InHandler {
-          override def onPush(): Unit = {
-            val input = grab(in)
-            inObs.onNext(input)
-            pull(in)
+        setHandler(
+          in,
+          new InHandler {
+            override def onPush(): Unit = {
+              val input = grab(in)
+              inObs.onNext(input)
+              pull(in)
+            }
+            override def onUpstreamFinish(): Unit = inObs.onCompleted()
+            override def onUpstreamFailure(t: Throwable): Unit = inObs.onError(t)
           }
-          override def onUpstreamFinish(): Unit = inObs.onCompleted()
-          override def onUpstreamFailure(t: Throwable): Unit = inObs.onError(t)
-        })
+        )
         setHandler(out, new OutHandler {
           override def onPull(): Unit = ()
         })
@@ -43,18 +46,20 @@ object GrpcAkkaStreams {
       }
   }
 
-  class GrpcSourceStage[O] extends GraphStageWithMaterializedValue[SourceShape[O], Future[StreamObserver[O]]] {
+  class GrpcSourceStage[O]
+      extends GraphStageWithMaterializedValue[SourceShape[O], Future[StreamObserver[O]]] {
     val out = Outlet[O]("grpc.out")
     override val shape: SourceShape[O] = SourceShape.of(out)
     override def createLogicAndMaterializedValue(
-      inheritedAttributes: Attributes
+        inheritedAttributes: Attributes
     ): (GraphStageLogic, Future[StreamObserver[O]]) = {
       val promise: Promise[StreamObserver[O]] = Promise()
       val logic = new GraphStageLogic(shape) {
         val observer = new StreamObserver[O] {
           override def onError(t: Throwable) = fail(out, t)
           override def onCompleted() = getAsyncCallback((_: Unit) => complete(out)).invoke(())
-          override def onNext(value: O) = getAsyncCallback((value: O) => emit(out, value)).invoke(value)
+          override def onNext(value: O) =
+            getAsyncCallback((value: O) => emit(out, value)).invoke(value)
         }
         setHandler(out, new OutHandler {
           override def onPull(): Unit = ()
@@ -65,24 +70,25 @@ object GrpcAkkaStreams {
     }
   }
 
-  def getBidiFlow[I, O](f: GrpcOperator[I, O] ): Flow[I, O, NotUsed] = {
+  def getBidiFlow[I, O](f: GrpcOperator[I, O]): Flow[I, O, NotUsed] = {
     Flow.fromGraph(
-      new GrpcGraphStage[I, O](outputObserver =>
-        f(outputObserver)
-      )
+      new GrpcGraphStage[I, O](outputObserver => f(outputObserver))
     )
   }
 
-  def getServerStreamingFLow[I, O](request: I)(f: (I, StreamObserver[O]) => Unit): Source[O, NotUsed] = {
+  def getServerStreamingFLow[I, O](
+      request: I
+  )(f: (I, StreamObserver[O]) => Unit): Source[O, NotUsed] = {
     val flow = Flow.fromGraph(
-      new GrpcGraphStage[I, O](outputObserver =>
-        new StreamObserver[I] {
-          override def onError(t: Throwable): Unit = ()
-          override def onCompleted(): Unit = ()
-          override def onNext(request: I): Unit = {
-            f(request, outputObserver)
+      new GrpcGraphStage[I, O](
+        outputObserver =>
+          new StreamObserver[I] {
+            override def onError(t: Throwable): Unit = ()
+            override def onCompleted(): Unit = ()
+            override def onNext(request: I): Unit = {
+              f(request, outputObserver)
+            }
           }
-        }
       )
     )
     Source.single(request).via(flow)

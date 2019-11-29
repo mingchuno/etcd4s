@@ -15,8 +15,11 @@ private[etcd4s] class AuthService(protected val authRpc: AuthRpc) {
     authRpc.authDisable(AuthDisableRequest())
   }
 
-  def authenticate(name: String, password: String)(implicit ec: ExecutionContext): Future[String] = {
-    authRpc.authenticate(AuthenticateRequest(name = name, password = password))
+  def authenticate(name: String, password: String)(
+      implicit ec: ExecutionContext
+  ): Future[String] = {
+    authRpc
+      .authenticate(AuthenticateRequest(name = name, password = password))
       .map(_.token)
   }
 
@@ -64,11 +67,20 @@ private[etcd4s] class AuthService(protected val authRpc: AuthRpc) {
     authRpc.roleDelete(AuthRoleDeleteRequest(role = role))
   }
 
-  def roleGrantPermission(role: String, perm: Permission): Future[AuthRoleGrantPermissionResponse] = {
+  def roleGrantPermission(
+      role: String,
+      perm: Permission
+  ): Future[AuthRoleGrantPermissionResponse] = {
     authRpc.roleGrantPermission(AuthRoleGrantPermissionRequest(role, Some(perm)))
   }
 
-  def roleRevokePermission(role: String, key: String, rangeEnd: String): Future[AuthRoleRevokePermissionResponse] = {
-    authRpc.roleRevokePermission(AuthRoleRevokePermissionRequest(role = role, key = key, rangeEnd = rangeEnd))
+  def roleRevokePermission(
+      role: String,
+      key: String,
+      rangeEnd: String
+  ): Future[AuthRoleRevokePermissionResponse] = {
+    authRpc.roleRevokePermission(
+      AuthRoleRevokePermissionRequest(role = role, key = key, rangeEnd = rangeEnd)
+    )
   }
 }

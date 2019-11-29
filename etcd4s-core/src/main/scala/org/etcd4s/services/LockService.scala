@@ -8,7 +8,10 @@ import org.etcd4s.rpc.LockRpc
 import scala.concurrent.{ExecutionContext, Future}
 
 private[etcd4s] class LockService(protected val lockRpc: LockRpc) {
-  def lock[K](name: K, lease: Long )(implicit write: Write[K], ec: ExecutionContext): Future[String] = {
+  def lock[K](
+      name: K,
+      lease: Long
+  )(implicit write: Write[K], ec: ExecutionContext): Future[String] = {
     lockRpc.lock(LockRequest(name = write.write(name), lease)).map(_.key)
   }
 

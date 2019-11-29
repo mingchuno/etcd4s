@@ -10,8 +10,11 @@ import scala.concurrent.{ExecutionContext, Future}
 
 private[etcd4s] class KVService(protected val kVRpc: KVRpc) {
 
-  def getKey[K,V](key: K)(implicit read: Read[V], write: Write[K], ec: ExecutionContext): Future[Option[V]] = {
-    kVRpc.range(RangeRequest().withKey(write.write(key)))
+  def getKey[K, V](
+      key: K
+  )(implicit read: Read[V], write: Write[K], ec: ExecutionContext): Future[Option[V]] = {
+    kVRpc
+      .range(RangeRequest().withKey(write.write(key)))
       .map(_.kvs)
       .map { kvs =>
         if (kvs.isEmpty) None else Some(read.read(kvs.head.value))
@@ -22,8 +25,12 @@ private[etcd4s] class KVService(protected val kVRpc: KVRpc) {
     kVRpc.range(RangeRequest().withPrefix(write.write(key)))
   }
 
-  def setKey[K,V](key: K, value: V)(implicit writeK: Write[K], writeV: Write[V], ec: ExecutionContext): Future[Option[KeyValue]] = {
-    kVRpc.put(PutRequest(key = writeK.write(key), value = writeV.write(value)))
+  def setKey[K, V](
+      key: K,
+      value: V
+  )(implicit writeK: Write[K], writeV: Write[V], ec: ExecutionContext): Future[Option[KeyValue]] = {
+    kVRpc
+      .put(PutRequest(key = writeK.write(key), value = writeV.write(value)))
       .map(_.prevKv)
   }
 

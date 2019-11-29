@@ -15,7 +15,7 @@ class ImplicitsOpsSpec extends FeatureSpec with Matchers {
     scenario("other ascii chars should work too") {
       val req = RangeRequest().withPrefix("foo~")
       (req.key: String) shouldBe "foo~"
-      req.rangeEnd.toByteArray shouldBe Array[Byte](102,111,111,127)
+      req.rangeEnd.toByteArray shouldBe Array[Byte](102, 111, 111, 127)
     }
 
     scenario("should return []byte{0} for 0xff") {

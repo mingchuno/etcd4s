@@ -13,7 +13,10 @@ import org.scalatest.BeforeAndAfterAll
 
 import scala.concurrent.duration._
 
-class WatchServiceSpec extends TestKit(ActorSystem("WatchServiceSpec")) with Etcd4sFeatureSpec with BeforeAndAfterAll {
+class WatchServiceSpec
+    extends TestKit(ActorSystem("WatchServiceSpec"))
+    with Etcd4sFeatureSpec
+    with BeforeAndAfterAll {
 
   override def afterAll() = {
     super.afterAll()
@@ -33,7 +36,8 @@ class WatchServiceSpec extends TestKit(ActorSystem("WatchServiceSpec")) with Etc
 
       info("make the stream")
       val flowUnderTest = client.rpcClient.watchRpc.watchFlow
-      val (pub, sub) = TestSource.probe[WatchRequest]
+      val (pub, sub) = TestSource
+        .probe[WatchRequest]
         .via(flowUnderTest)
         .toMat(TestSink.probe[WatchResponse])(Keep.both)
         .run()
@@ -53,7 +57,11 @@ class WatchServiceSpec extends TestKit(ActorSystem("WatchServiceSpec")) with Etc
       client.kvService.setKey(KEY, "bar3").futureValue
 
       info("check receive event")
-      sub.expectNextN(3).map(_.events.head.kv.get.value).toList.map(x => x: String) shouldBe List("bar1", "bar2", "bar3")
+      sub.expectNextN(3).map(_.events.head.kv.get.value).toList.map(x => x: String) shouldBe List(
+        "bar1",
+        "bar2",
+        "bar3"
+      )
 
       info("cancel watch")
       sub.request(n = 1)

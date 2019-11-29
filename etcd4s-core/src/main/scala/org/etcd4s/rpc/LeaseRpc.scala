@@ -10,7 +10,8 @@ private[etcd4s] class LeaseRpc(protected val stub: LeaseStub) extends Lease {
 
   override def leaseRevoke(request: LeaseRevokeRequest) = stub.leaseRevoke(request)
 
-  override def leaseKeepAlive(responseObserver: StreamObserver[LeaseKeepAliveResponse]) = stub.leaseKeepAlive(responseObserver)
+  override def leaseKeepAlive(responseObserver: StreamObserver[LeaseKeepAliveResponse]) =
+    stub.leaseKeepAlive(responseObserver)
 
   override def leaseTimeToLive(request: LeaseTimeToLiveRequest) = stub.leaseTimeToLive(request)
 

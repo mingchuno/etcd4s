@@ -4,10 +4,12 @@ import io.netty.handler.ssl.SslContext
 
 case class Credential(user: String, password: String)
 
-case class Etcd4sClientConfig(address: String,
-                              port: Int,
-                              credential: Option[Credential] = None,
-                              sslContext: Option[SslContext] = None) {
+case class Etcd4sClientConfig(
+    address: String,
+    port: Int,
+    credential: Option[Credential] = None,
+    sslContext: Option[SslContext] = None
+) {
   def withCredential(username: String, password: String): Etcd4sClientConfig = {
     require(username != null)
     require(password != null)

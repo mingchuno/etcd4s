@@ -19,7 +19,8 @@ private[etcd4s] class AuthRpc(protected val stub: AuthStub) extends Auth {
 
   override def userDelete(request: AuthUserDeleteRequest) = stub.userDelete(request)
 
-  override def userChangePassword(request: AuthUserChangePasswordRequest) = stub.userChangePassword(request)
+  override def userChangePassword(request: AuthUserChangePasswordRequest) =
+    stub.userChangePassword(request)
 
   override def userGrantRole(request: AuthUserGrantRoleRequest) = stub.userGrantRole(request)
 
@@ -33,8 +34,10 @@ private[etcd4s] class AuthRpc(protected val stub: AuthStub) extends Auth {
 
   override def roleDelete(request: AuthRoleDeleteRequest) = stub.roleDelete(request)
 
-  override def roleGrantPermission(request: AuthRoleGrantPermissionRequest) = stub.roleGrantPermission(request)
+  override def roleGrantPermission(request: AuthRoleGrantPermissionRequest) =
+    stub.roleGrantPermission(request)
 
-  override def roleRevokePermission(request: AuthRoleRevokePermissionRequest) = stub.roleRevokePermission(request)
+  override def roleRevokePermission(request: AuthRoleRevokePermissionRequest) =
+    stub.roleRevokePermission(request)
 
 }

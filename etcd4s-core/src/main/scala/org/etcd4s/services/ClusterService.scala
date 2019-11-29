@@ -14,7 +14,9 @@ private[etcd4s] class ClusterService(protected val clusterRpc: ClusterRpc) {
     clusterRpc.memberRemove(MemberRemoveRequest(iD)).map(_.members)
   }
 
-  def memberUpdate(iD: Long, peerURLs: Seq[String])(implicit ec: ExecutionContext): Future[Seq[Member]] = {
+  def memberUpdate(iD: Long, peerURLs: Seq[String])(
+      implicit ec: ExecutionContext
+  ): Future[Seq[Member]] = {
     clusterRpc.memberUpdate(MemberUpdateRequest(iD, peerURLs)).map(_.members)
   }
 

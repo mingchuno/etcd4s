@@ -6,7 +6,12 @@ import org.scalatest.time.{Seconds, Span}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
-trait Etcd4sFeatureSpec extends FeatureSpecLike with Matchers with ScalaFutures with OptionValues with BeforeAndAfterAll {
+trait Etcd4sFeatureSpec
+    extends FeatureSpecLike
+    with Matchers
+    with ScalaFutures
+    with OptionValues
+    with BeforeAndAfterAll {
 
   implicit protected val futureConfig = PatienceConfig(timeout = scaled(Span(10, Seconds)))
 
