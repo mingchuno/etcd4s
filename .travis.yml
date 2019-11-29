@@ -1,9 +1,11 @@
 language: scala
-jdk: oraclejdk8
+jdk:
+  - openjdk8
+  - openjdk11
 scala:
+  - 2.12.10
   - 2.11.12
-  - 2.12.8
-  - 2.13.0
+  - 2.13.1
 sudo: required
 services:
   - docker
