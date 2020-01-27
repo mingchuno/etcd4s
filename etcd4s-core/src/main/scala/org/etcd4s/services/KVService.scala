@@ -21,7 +21,7 @@ private[etcd4s] class KVService(protected val kVRpc: KVRpc) {
       }
   }
 
-  def getRange[K](key: K)(implicit write: Write[K], ec: ExecutionContext): Future[RangeResponse] = {
+  def getRange[K](key: K)(implicit write: Write[K]): Future[RangeResponse] = {
     kVRpc.range(RangeRequest().withPrefix(write.write(key)))
   }
 

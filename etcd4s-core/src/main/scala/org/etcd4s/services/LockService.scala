@@ -15,7 +15,7 @@ private[etcd4s] class LockService(protected val lockRpc: LockRpc) {
     lockRpc.lock(LockRequest(name = write.write(name), lease)).map(_.key)
   }
 
-  def unlock(key: String)(implicit ec: ExecutionContext): Future[UnlockResponse] = {
+  def unlock(key: String): Future[UnlockResponse] = {
     lockRpc.unlock(UnlockRequest(key))
   }
 }

@@ -12,6 +12,8 @@ object build {
       "-unchecked",
       "-deprecation",
       "-feature",
+      "-Xlint:unused",
+      "-Xlint:deprecation",
       "-language:existentials",
       "-language:implicitConversions",
       "-language:higherKinds",
