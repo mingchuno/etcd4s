@@ -21,7 +21,7 @@ private[etcd4s] class MaintenanceRpc(protected val stub: MaintenanceStub) extend
   override def snapshot(
       request: SnapshotRequest,
       responseObserver: StreamObserver[SnapshotResponse]
-  ) =
+  ): Unit =
     stub.snapshot(request, responseObserver)
 
   override def moveLeader(request: MoveLeaderRequest): Future[MoveLeaderResponse] =
