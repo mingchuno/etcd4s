@@ -7,6 +7,7 @@ import org.etcd4s.rpc.LockRpc
 
 import scala.concurrent.{ExecutionContext, Future}
 
+@deprecated
 private[etcd4s] class LockService(protected val lockRpc: LockRpc) {
   def lock[K](
       name: K,

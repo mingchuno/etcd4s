@@ -8,15 +8,21 @@ import scala.concurrent.Future
 
 private[etcd4s] class LeaseRpc(protected val stub: LeaseStub) extends Lease {
 
-  override def leaseGrant(request: LeaseGrantRequest): Future[LeaseGrantResponse] = stub.leaseGrant(request)
+  override def leaseGrant(request: LeaseGrantRequest): Future[LeaseGrantResponse] =
+    stub.leaseGrant(request)
 
-  override def leaseRevoke(request: LeaseRevokeRequest): Future[LeaseRevokeResponse] = stub.leaseRevoke(request)
+  override def leaseRevoke(request: LeaseRevokeRequest): Future[LeaseRevokeResponse] =
+    stub.leaseRevoke(request)
 
-  override def leaseKeepAlive(responseObserver: StreamObserver[LeaseKeepAliveResponse]): StreamObserver[LeaseKeepAliveRequest] =
+  override def leaseKeepAlive(
+      responseObserver: StreamObserver[LeaseKeepAliveResponse]
+  ): StreamObserver[LeaseKeepAliveRequest] =
     stub.leaseKeepAlive(responseObserver)
 
-  override def leaseTimeToLive(request: LeaseTimeToLiveRequest): Future[LeaseTimeToLiveResponse] = stub.leaseTimeToLive(request)
+  override def leaseTimeToLive(request: LeaseTimeToLiveRequest): Future[LeaseTimeToLiveResponse] =
+    stub.leaseTimeToLive(request)
 
-  override def leaseLeases(request: LeaseLeasesRequest): Future[LeaseLeasesResponse] = stub.leaseLeases(request)
+  override def leaseLeases(request: LeaseLeasesRequest): Future[LeaseLeasesResponse] =
+    stub.leaseLeases(request)
 
 }

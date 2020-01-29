@@ -1,30 +1,32 @@
 package org.etcd4s
 
-import org.etcd4s.formats._
-
-import scala.concurrent.ExecutionContext.Implicits.global
+import org.etcd4s.pb.etcdserverpb._
+import org.etcd4s.implicits._
 
 class AuthServiceSpec extends Etcd4sFeatureSpec {
 
   override def beforeAll(): Unit = {
     // TODO: move to config
-    val users = client.authService.userList().futureValue
+    val users = client.authRpc.userList(AuthUserListRequest()).futureValue.users
     if (!users.contains("root")) {
-      client.authService.userAdd("root", "Admin123").futureValue
-      client.authService.userGrantRole("root", "root").futureValue
+      client.authRpc
+        .userAdd(AuthUserAddRequest(name = "root", password = "Admin123"))
+        .futureValue
+      client.authRpc.userGrantRole(AuthUserGrantRoleRequest("root", "root")).futureValue
     }
-    client.authService.authEnable().futureValue
+    client.authRpc.authEnable(AuthEnableRequest()).futureValue
   }
 
   feature("client with auth") {
     scenario("should be able the call api") {
       val authClient = getAuthClient
-      authClient.kvService.setKey("foo", "bar").futureValue
-      val value: String = authClient.kvService.getKey("foo").futureValue.get
+      authClient.kvRpc.put(PutRequest().withKey("foo").withValue("bar")).futureValue
+      val value: String =
+        authClient.kvRpc.range(RangeRequest().withKey("foo")).futureValue.kvs.head.value
       info(s"value is:$value")
       value shouldBe "bar"
 
-      authClient.authService.authDisable().futureValue
+      authClient.authRpc.authDisable(AuthDisableRequest()).futureValue
       authClient.shutdown()
     }
   }

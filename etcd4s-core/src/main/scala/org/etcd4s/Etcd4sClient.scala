@@ -9,7 +9,7 @@ import org.etcd4s.pb.etcdserverpb._
 import org.etcd4s.pb.v3electionpb.ElectionGrpc
 import org.etcd4s.pb.v3lockpb.LockGrpc
 import org.etcd4s.rpc._
-import org.etcd4s.services.{AuthService, ClusterService, KVService, LockService}
+import org.etcd4s.services.AuthService
 
 import scala.concurrent.duration._
 import scala.concurrent.{Await, ExecutionContext}
@@ -58,7 +58,7 @@ private[etcd4s] class Etcd4sRpcClient(val channel: ManagedChannel) {
   val lockRpc = new LockRpc(LockGrpc.stub(channel))
   val electionRpc = new ElectionRpc(ElectionGrpc.stub(channel))
 
-  def shutdown() = {
+  def shutdown(): Boolean = {
     channel.shutdown()
     channel.awaitTermination(5, TimeUnit.SECONDS)
   }
@@ -67,25 +67,5 @@ private[etcd4s] class Etcd4sRpcClient(val channel: ManagedChannel) {
 object Etcd4sRpcClient {
   def newClient(config: Etcd4sClientConfig)(implicit ec: ExecutionContext): Etcd4sRpcClient = {
     new Etcd4sRpcClient(new EtcdChannelBuilder(config).build())
-  }
-}
-
-private[etcd4s] class Etcd4sClient(val rpcClient: Etcd4sRpcClient) {
-
-  val authService = new AuthService(rpcClient.authRpc)
-  val clusterService = new ClusterService(rpcClient.clusterRpc)
-  val kvService = new KVService(rpcClient.kvRpc)
-  val lockService = new LockService(rpcClient.lockRpc)
-
-  def shutdown() = {
-    rpcClient.shutdown()
-  }
-
-}
-
-object Etcd4sClient {
-  def newClient(config: Etcd4sClientConfig)(implicit ec: ExecutionContext): Etcd4sClient = {
-    val rpcClient = Etcd4sRpcClient.newClient(config)
-    new Etcd4sClient(rpcClient)
   }
 }

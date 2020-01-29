@@ -5,6 +5,7 @@ import org.etcd4s.rpc.ClusterRpc
 
 import scala.concurrent.{ExecutionContext, Future}
 
+@deprecated
 private[etcd4s] class ClusterService(protected val clusterRpc: ClusterRpc) {
   def memberAdd(peerURLs: Seq[String]): Future[MemberAddResponse] = {
     clusterRpc.memberAdd(MemberAddRequest(peerURLs))

@@ -6,7 +6,6 @@ import akka.stream.scaladsl.Keep
 import akka.stream.testkit.scaladsl.{TestSink, TestSource}
 import akka.testkit.TestKit
 import org.etcd4s.akkasupport._
-import org.etcd4s.formats._
 import org.etcd4s.implicits._
 import org.etcd4s.pb.etcdserverpb._
 import org.scalatest.BeforeAndAfterAll
@@ -18,7 +17,7 @@ class WatchServiceSpec
     with Etcd4sFeatureSpec
     with BeforeAndAfterAll {
 
-  override def afterAll() = {
+  override def afterAll(): Unit = {
     super.afterAll()
     TestKit.shutdownActorSystem(system)
   }
@@ -32,10 +31,12 @@ class WatchServiceSpec
       val timeout = 3 seconds
 
       info("delete key")
-      client.kvService.deleteKey(KEY).futureValue
+      client.kvRpc
+        .deleteRange(DeleteRangeRequest().withKey(KEY))
+        .futureValue
 
       info("make the stream")
-      val flowUnderTest = client.rpcClient.watchRpc.watchFlow
+      val flowUnderTest = client.watchRpc.watchFlow
       val (pub, sub) = TestSource
         .probe[WatchRequest]
         .via(flowUnderTest)
@@ -52,9 +53,9 @@ class WatchServiceSpec
 
       info("change some key")
       sub.request(n = 3)
-      client.kvService.setKey(KEY, "bar1").futureValue
-      client.kvService.setKey(KEY, "bar2").futureValue
-      client.kvService.setKey(KEY, "bar3").futureValue
+      client.kvRpc.put(PutRequest().withKey(KEY).withValue("bar1")).futureValue
+      client.kvRpc.put(PutRequest().withKey(KEY).withValue("bar2")).futureValue
+      client.kvRpc.put(PutRequest().withKey(KEY).withValue("bar3")).futureValue
 
       info("check receive event")
       sub.expectNextN(3).map(_.events.head.kv.get.value).toList.map(x => x: String) shouldBe List(

@@ -8,6 +8,7 @@ import org.etcd4s.implicits._
 
 import scala.concurrent.{ExecutionContext, Future}
 
+@deprecated
 private[etcd4s] class KVService(protected val kVRpc: KVRpc) {
 
   def getKey[K, V](

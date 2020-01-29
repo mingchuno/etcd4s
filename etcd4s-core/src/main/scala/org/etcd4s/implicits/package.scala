@@ -34,20 +34,20 @@ trait RequestPrefixOps {
   }
 
   implicit class RangeRequestOps(request: RangeRequest) {
-    def withPrefix(__v: ByteString): RangeRequest = {
-      request.withKey(__v).withRangeEnd(getPrefix(__v))
+    def withPrefix(prefix: ByteString): RangeRequest = {
+      request.withKey(prefix).withRangeEnd(getPrefix(prefix))
     }
   }
 
   implicit class DeleteRangeRequestOps(request: DeleteRangeRequest) {
-    def withPrefix(__v: ByteString): DeleteRangeRequest = {
-      request.withKey(__v).withRangeEnd(getPrefix(__v))
+    def withPrefix(prefix: ByteString): DeleteRangeRequest = {
+      request.withKey(prefix).withRangeEnd(getPrefix(prefix))
     }
   }
 
   implicit class WatchCreateRequestOps(request: WatchCreateRequest) {
-    def withPrefix(__v: ByteString): WatchCreateRequest = {
-      request.withKey(__v).withRangeEnd(getPrefix(__v))
+    def withPrefix(prefix: ByteString): WatchCreateRequest = {
+      request.withKey(prefix).withRangeEnd(getPrefix(prefix))
     }
   }
 

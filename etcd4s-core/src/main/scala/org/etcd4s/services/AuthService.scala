@@ -6,6 +6,7 @@ import org.etcd4s.rpc.AuthRpc
 
 import scala.concurrent.{ExecutionContext, Future}
 
+@deprecated
 private[etcd4s] class AuthService(protected val authRpc: AuthRpc) {
   def authEnable(): Future[AuthEnableResponse] = {
     authRpc.authEnable(AuthEnableRequest())

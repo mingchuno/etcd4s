@@ -13,27 +13,29 @@ trait Etcd4sFeatureSpec
     with OptionValues
     with BeforeAndAfterAll {
 
-  implicit protected val futureConfig = PatienceConfig(timeout = scaled(Span(10, Seconds)))
+  implicit protected val futureConfig: PatienceConfig = PatienceConfig(
+    timeout = scaled(Span(10, Seconds))
+  )
 
   override def afterAll(): Unit = {
     client.shutdown()
   }
 
   // TODO: move to config later
-  protected val client = {
+  protected val client: Etcd4sRpcClient = {
     val config = Etcd4sClientConfig(
       address = "127.0.0.1",
       port = 2379
     )
-    Etcd4sClient.newClient(config)
+    Etcd4sRpcClient.newClient(config)
   }
 
-  def getAuthClient = {
+  def getAuthClient: Etcd4sRpcClient = {
     val config = Etcd4sClientConfig(
       address = "127.0.0.1",
       port = 2379
     ).withCredential("root", "Admin123")
-    Etcd4sClient.newClient(config)
+    Etcd4sRpcClient.newClient(config)
   }
 
 }
