@@ -19,12 +19,12 @@ class ExampleConversionSpec
     timeout = scaled(Span(10, Seconds))
   )
 
-  protected lazy val rpcClient: Etcd4sRpcClient = {
+  protected lazy val rpcClient: Etcd4sClient = {
     val config = Etcd4sClientConfig(
       address = "127.0.0.1",
       port = 2379
     )
-    Etcd4sRpcClient.newClient(config)
+    Etcd4sClient.newClient(config)
   }
 
   override def afterAll(): Unit = {

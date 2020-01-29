@@ -47,7 +47,7 @@ private[etcd4s] class EtcdChannelBuilder(config: Etcd4sClientConfig) {
   }
 }
 
-private[etcd4s] class Etcd4sRpcClient(val channel: ManagedChannel) {
+private[etcd4s] class Etcd4sClient(val channel: ManagedChannel) {
   val kvApi = new KVRpc(KVGrpc.stub(channel))
   val clusterApi = new ClusterRpc(ClusterGrpc.stub(channel))
   val authApi = new AuthRpc(AuthGrpc.stub(channel))
@@ -63,8 +63,8 @@ private[etcd4s] class Etcd4sRpcClient(val channel: ManagedChannel) {
   }
 }
 
-object Etcd4sRpcClient {
-  def newClient(config: Etcd4sClientConfig)(implicit ec: ExecutionContext): Etcd4sRpcClient = {
-    new Etcd4sRpcClient(new EtcdChannelBuilder(config).build())
+object Etcd4sClient {
+  def newClient(config: Etcd4sClientConfig)(implicit ec: ExecutionContext): Etcd4sClient = {
+    new Etcd4sClient(new EtcdChannelBuilder(config).build())
   }
 }

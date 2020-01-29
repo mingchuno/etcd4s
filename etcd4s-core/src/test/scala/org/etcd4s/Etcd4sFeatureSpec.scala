@@ -22,20 +22,20 @@ trait Etcd4sFeatureSpec
   }
 
   // TODO: move to config later
-  protected val client: Etcd4sRpcClient = {
+  protected val client: Etcd4sClient = {
     val config = Etcd4sClientConfig(
       address = "127.0.0.1",
       port = 2379
     )
-    Etcd4sRpcClient.newClient(config)
+    Etcd4sClient.newClient(config)
   }
 
-  def getAuthClient: Etcd4sRpcClient = {
+  def getAuthClient: Etcd4sClient = {
     val config = Etcd4sClientConfig(
       address = "127.0.0.1",
       port = 2379
     ).withCredential("root", "Admin123")
-    Etcd4sRpcClient.newClient(config)
+    Etcd4sClient.newClient(config)
   }
 
 }
