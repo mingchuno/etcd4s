@@ -13,63 +13,63 @@ class KVServiceSpec extends Etcd4sFeatureSpec {
     val VALUE_2 = "World"
 
     scenario(s"remove '$KEY'") {
-      client.kvRpc.deleteRange(DeleteRangeRequest().withKey(KEY)).futureValue
+      client.kvApi.deleteRange(DeleteRangeRequest().withKey(KEY)).futureValue
     }
 
     scenario(s"set '$KEY' to '$VALUE_1'") {
-      client.kvRpc.put(PutRequest().withKey(KEY).withValue(VALUE_1)).futureValue
+      client.kvApi.put(PutRequest().withKey(KEY).withValue(VALUE_1)).futureValue
     }
 
     scenario(s"get '$KEY' should be '$VALUE_1'") {
-      val result = client.kvRpc.range(RangeRequest().withKey(KEY)).futureValue
+      val result = client.kvApi.range(RangeRequest().withKey(KEY)).futureValue
       result.count shouldBe 1
       result.more shouldBe false
       (result.kvs.head.value: String) shouldBe VALUE_1
     }
 
     scenario(s"update '$KEY' to '$VALUE_2'") {
-      client.kvRpc.put(PutRequest().withKey(KEY).withValue(VALUE_2)).futureValue
+      client.kvApi.put(PutRequest().withKey(KEY).withValue(VALUE_2)).futureValue
     }
 
     scenario(s"get '$KEY' should be '$VALUE_2'") {
-      val result = client.kvRpc.range(RangeRequest().withKey(KEY)).futureValue
+      val result = client.kvApi.range(RangeRequest().withKey(KEY)).futureValue
       result.count shouldBe 1
       result.more shouldBe false
       (result.kvs.head.value: String) shouldBe VALUE_2
     }
 
     scenario(s"remove '$KEY' should have 1 key") {
-      client.kvRpc
+      client.kvApi
         .deleteRange(DeleteRangeRequest().withKey(KEY))
         .futureValue
         .deleted shouldBe 1
     }
 
     scenario(s"get '$KEY' should be empty") {
-      client.kvRpc.range(RangeRequest().withKey(KEY)).futureValue.count shouldBe 0
+      client.kvApi.range(RangeRequest().withKey(KEY)).futureValue.count shouldBe 0
     }
   }
 
   feature("KV api with range of keys") {
     scenario("set a rage of keys in the same key space and get them out") {
       info("remove all key under foo/ first")
-      client.kvRpc.deleteRange(DeleteRangeRequest().withPrefix("foo/")).futureValue
+      client.kvApi.deleteRange(DeleteRangeRequest().withPrefix("foo/")).futureValue
 
       info("add 2 keys under foo/")
-      client.kvRpc.put(PutRequest().withKey("foo/bar1").withValue("Hello")).futureValue
-      client.kvRpc.put(PutRequest().withKey("foo/bar2").withValue("World")).futureValue
+      client.kvApi.put(PutRequest().withKey("foo/bar1").withValue("Hello")).futureValue
+      client.kvApi.put(PutRequest().withKey("foo/bar2").withValue("World")).futureValue
 
       info("get them and check")
-      val result = client.kvRpc.range(RangeRequest().withPrefix("foo/")).futureValue
+      val result = client.kvApi.range(RangeRequest().withPrefix("foo/")).futureValue
       result.count shouldBe 2
       result.more shouldBe false
       (result.kvs.map(_.key: String): Seq[String]) shouldBe Seq("foo/bar1", "foo/bar2")
 
-      client.kvRpc
+      client.kvApi
         .deleteRange(DeleteRangeRequest().withPrefix("foo/bar1"))
         .futureValue
         .deleted shouldBe 1
-      client.kvRpc
+      client.kvApi
         .deleteRange(DeleteRangeRequest().withKey("foo/bar2"))
         .futureValue
         .deleted shouldBe 1
@@ -83,13 +83,13 @@ class KVServiceSpec extends Etcd4sFeatureSpec {
     scenario("set multiple keys") {
       data.foreach {
         case (k, v) =>
-          client.kvRpc.put(PutRequest(key = k, value = v)).futureValue
+          client.kvApi.put(PutRequest(key = k, value = v)).futureValue
       }
     }
 
     scenario("get multiple keys") {
       val result: RangeResponse =
-        client.kvRpc.range(RangeRequest().withPrefix("foo/")).futureValue
+        client.kvApi.range(RangeRequest().withPrefix("foo/")).futureValue
       result.count shouldBe 3
       result.more shouldBe false
       val map: Map[String, String] = result.kvs.map { kv =>
@@ -99,11 +99,11 @@ class KVServiceSpec extends Etcd4sFeatureSpec {
     }
 
     scenario("delete range") {
-      client.kvRpc
+      client.kvApi
         .deleteRange(DeleteRangeRequest().withPrefix("foo/"))
         .futureValue
         .deleted shouldBe 3
-      client.kvRpc.range(RangeRequest().withPrefix("foo/")).futureValue.count shouldBe 0
+      client.kvApi.range(RangeRequest().withPrefix("foo/")).futureValue.count shouldBe 0
     }
   }
 }

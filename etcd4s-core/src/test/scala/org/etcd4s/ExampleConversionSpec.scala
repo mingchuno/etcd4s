@@ -36,45 +36,45 @@ class ExampleConversionSpec
     val VALUE_1 = "Hello"
     val VALUE_2 = "World"
     scenario(s"remove '$KEY'") {
-      rpcClient.kvRpc.deleteRange(DeleteRangeRequest().withKey(KEY)).futureValue
+      rpcClient.kvApi.deleteRange(DeleteRangeRequest().withKey(KEY)).futureValue
     }
     scenario(s"set '$KEY' to '$VALUE_1'") {
-      rpcClient.kvRpc.put(PutRequest().withKey(KEY).withValue(VALUE_1)).futureValue
+      rpcClient.kvApi.put(PutRequest().withKey(KEY).withValue(VALUE_1)).futureValue
     }
     scenario(s"get '$KEY' should be '$VALUE_1'") {
-      val result = rpcClient.kvRpc.range(RangeRequest().withKey(KEY)).futureValue
+      val result = rpcClient.kvApi.range(RangeRequest().withKey(KEY)).futureValue
       result.count shouldBe 1
       result.more shouldBe false
       (result.kvs.head.value: String) shouldBe VALUE_1
     }
     scenario(s"update '$KEY' to '$VALUE_2'") {
-      rpcClient.kvRpc.put(PutRequest().withKey(KEY).withValue(VALUE_2)).futureValue
+      rpcClient.kvApi.put(PutRequest().withKey(KEY).withValue(VALUE_2)).futureValue
     }
 
     scenario(s"get '$KEY' should be '$VALUE_2'") {
-      val result = rpcClient.kvRpc.range(RangeRequest().withKey(KEY)).futureValue
+      val result = rpcClient.kvApi.range(RangeRequest().withKey(KEY)).futureValue
       result.count shouldBe 1
       result.more shouldBe false
       (result.kvs.head.value: String) shouldBe VALUE_2
     }
 
     scenario(s"remove '$KEY' should have 1 key") {
-      rpcClient.kvRpc
+      rpcClient.kvApi
         .deleteRange(DeleteRangeRequest().withKey(KEY))
         .futureValue
         .deleted shouldBe 1
     }
 
     scenario(s"get '$KEY' should be empty") {
-      rpcClient.kvRpc.range(RangeRequest().withKey(KEY)).futureValue.count shouldBe 0
+      rpcClient.kvApi.range(RangeRequest().withKey(KEY)).futureValue.count shouldBe 0
     }
     scenario(s"set '$KEY' to '$VALUE_1' with lease and revoke the lease") {
-      val leaseId = rpcClient.leaseRpc.leaseGrant(LeaseGrantRequest(20)).futureValue.iD
-      rpcClient.kvRpc
+      val leaseId = rpcClient.leaseApi.leaseGrant(LeaseGrantRequest(20)).futureValue.iD
+      rpcClient.kvApi
         .put(PutRequest().withKey(KEY).withValue(VALUE_1).withLease(leaseId))
         .futureValue
-      rpcClient.leaseRpc.leaseRevoke(LeaseRevokeRequest(leaseId)).futureValue
-      rpcClient.kvRpc.range(RangeRequest().withKey(KEY)).futureValue.count shouldBe 0
+      rpcClient.leaseApi.leaseRevoke(LeaseRevokeRequest(leaseId)).futureValue
+      rpcClient.kvApi.range(RangeRequest().withKey(KEY)).futureValue.count shouldBe 0
     }
   }
 }

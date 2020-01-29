@@ -9,7 +9,6 @@ import org.etcd4s.pb.etcdserverpb._
 import org.etcd4s.pb.v3electionpb.ElectionGrpc
 import org.etcd4s.pb.v3lockpb.LockGrpc
 import org.etcd4s.rpc._
-import org.etcd4s.services.AuthService
 
 import scala.concurrent.duration._
 import scala.concurrent.{Await, ExecutionContext}
@@ -25,10 +24,10 @@ private[etcd4s] class EtcdChannelBuilder(config: Etcd4sClientConfig) {
     if (config.credential.isDefined) {
       val tempChannel = builder.build()
       val authRpc = new AuthRpc(AuthGrpc.stub(tempChannel))
-      val authService = new AuthService(authRpc)
       val username = config.credential.get.user
       val password = config.credential.get.password
-      val f = authService.authenticate(name = username, password = password)
+      val f =
+        authRpc.authenticate(AuthenticateRequest(name = username, password = password)).map(_.token)
       val token = Await.result(f, 10 seconds)
       builder.intercept(authRequestInterceptor(token))
     }
@@ -49,14 +48,14 @@ private[etcd4s] class EtcdChannelBuilder(config: Etcd4sClientConfig) {
 }
 
 private[etcd4s] class Etcd4sRpcClient(val channel: ManagedChannel) {
-  val kvRpc = new KVRpc(KVGrpc.stub(channel))
-  val clusterRpc = new ClusterRpc(ClusterGrpc.stub(channel))
-  val authRpc = new AuthRpc(AuthGrpc.stub(channel))
-  val leaseRpc = new LeaseRpc(LeaseGrpc.stub(channel))
-  val watchRpc = new WatchRpc(WatchGrpc.stub(channel))
-  val maintenanceRpc = new MaintenanceRpc(MaintenanceGrpc.stub(channel))
-  val lockRpc = new LockRpc(LockGrpc.stub(channel))
-  val electionRpc = new ElectionRpc(ElectionGrpc.stub(channel))
+  val kvApi = new KVRpc(KVGrpc.stub(channel))
+  val clusterApi = new ClusterRpc(ClusterGrpc.stub(channel))
+  val authApi = new AuthRpc(AuthGrpc.stub(channel))
+  val leaseApi = new LeaseRpc(LeaseGrpc.stub(channel))
+  val watchApi = new WatchRpc(WatchGrpc.stub(channel))
+  val maintenanceApi = new MaintenanceRpc(MaintenanceGrpc.stub(channel))
+  val lockApi = new LockRpc(LockGrpc.stub(channel))
+  val electionApi = new ElectionRpc(ElectionGrpc.stub(channel))
 
   def shutdown(): Boolean = {
     channel.shutdown()

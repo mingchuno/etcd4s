@@ -31,12 +31,12 @@ class WatchServiceSpec
       val timeout = 3 seconds
 
       info("delete key")
-      client.kvRpc
+      client.kvApi
         .deleteRange(DeleteRangeRequest().withKey(KEY))
         .futureValue
 
       info("make the stream")
-      val flowUnderTest = client.watchRpc.watchFlow
+      val flowUnderTest = client.watchApi.watchFlow
       val (pub, sub) = TestSource
         .probe[WatchRequest]
         .via(flowUnderTest)
@@ -53,9 +53,9 @@ class WatchServiceSpec
 
       info("change some key")
       sub.request(n = 3)
-      client.kvRpc.put(PutRequest().withKey(KEY).withValue("bar1")).futureValue
-      client.kvRpc.put(PutRequest().withKey(KEY).withValue("bar2")).futureValue
-      client.kvRpc.put(PutRequest().withKey(KEY).withValue("bar3")).futureValue
+      client.kvApi.put(PutRequest().withKey(KEY).withValue("bar1")).futureValue
+      client.kvApi.put(PutRequest().withKey(KEY).withValue("bar2")).futureValue
+      client.kvApi.put(PutRequest().withKey(KEY).withValue("bar3")).futureValue
 
       info("check receive event")
       sub.expectNextN(3).map(_.events.head.kv.get.value).toList.map(x => x: String) shouldBe List(
