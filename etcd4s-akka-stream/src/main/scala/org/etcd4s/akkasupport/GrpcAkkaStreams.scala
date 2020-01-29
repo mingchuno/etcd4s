@@ -19,14 +19,14 @@ object GrpcAkkaStreams {
     override val shape: FlowShape[I, O] = FlowShape.of(in, out)
     override def createLogic(inheritedAttributes: Attributes): GraphStageLogic =
       new GraphStageLogic(shape) {
-        val outObs = new StreamObserver[O] {
+        val outObs: StreamObserver[O] = new StreamObserver[O] {
           override def onError(t: Throwable) = fail(out, t)
           override def onCompleted() =
             getAsyncCallback((_: Unit) => complete(out)).invoke(())
           override def onNext(value: O) =
             getAsyncCallback((value: O) => emit(out, value)).invoke(value)
         }
-        val inObs = operator(outObs)
+        val inObs: StreamObserver[I] = operator(outObs)
         setHandler(
           in,
           new InHandler {
@@ -55,10 +55,10 @@ object GrpcAkkaStreams {
     ): (GraphStageLogic, Future[StreamObserver[O]]) = {
       val promise: Promise[StreamObserver[O]] = Promise()
       val logic = new GraphStageLogic(shape) {
-        val observer = new StreamObserver[O] {
-          override def onError(t: Throwable) = fail(out, t)
-          override def onCompleted() = getAsyncCallback((_: Unit) => complete(out)).invoke(())
-          override def onNext(value: O) =
+        val observer: StreamObserver[O] = new StreamObserver[O] {
+          override def onError(t: Throwable): Unit = fail(out, t)
+          override def onCompleted(): Unit = getAsyncCallback((_: Unit) => complete(out)).invoke(())
+          override def onNext(value: O): Unit =
             getAsyncCallback((value: O) => emit(out, value)).invoke(value)
         }
         setHandler(out, new OutHandler {
@@ -104,13 +104,13 @@ object GrpcAkkaStreams {
   def grpcObserverToReactiveSubscriber[T](observer: StreamObserver[T]): Subscriber[T] =
     new Subscriber[T] {
       var subscription: Subscription = _
-      override def onError(t: Throwable) = observer.onError(t)
-      override def onComplete() = observer.onCompleted()
-      override def onNext(value: T) = {
+      override def onError(t: Throwable): Unit = observer.onError(t)
+      override def onComplete(): Unit = observer.onCompleted()
+      override def onNext(value: T): Unit = {
         observer.onNext(value)
         pull()
       }
-      override def onSubscribe(s: Subscription) = {
+      override def onSubscribe(s: Subscription): Unit = {
         subscription = s
         pull()
       }

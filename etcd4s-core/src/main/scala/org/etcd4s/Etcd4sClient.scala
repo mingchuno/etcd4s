@@ -9,6 +9,7 @@ import org.etcd4s.pb.etcdserverpb._
 import org.etcd4s.pb.v3electionpb.ElectionGrpc
 import org.etcd4s.pb.v3lockpb.LockGrpc
 import org.etcd4s.rpc._
+import org.etcd4s.services._
 
 import scala.concurrent.duration._
 import scala.concurrent.{Await, ExecutionContext}
@@ -47,7 +48,12 @@ private[etcd4s] class EtcdChannelBuilder(config: Etcd4sClientConfig) {
   }
 }
 
-private[etcd4s] class Etcd4sClient(val channel: ManagedChannel) {
+private[etcd4s] class Etcd4sClient(val channel: ManagedChannel)
+    extends AuthService
+    with ClusterService
+    with LockService
+    with LeaseService
+    with KVService {
   val kvApi = new KVRpc(KVGrpc.stub(channel))
   val clusterApi = new ClusterRpc(ClusterGrpc.stub(channel))
   val authApi = new AuthRpc(AuthGrpc.stub(channel))

@@ -2,6 +2,8 @@
 
 [![Build Status](https://travis-ci.org/mingchuno/etcd4s.svg?branch=master)](https://travis-ci.org/mingchuno/etcd4s)
 
+**THIS BRANCH IS UNDER ACTIVE DEVELOPMENT**
+
 A Scala etcd client implementing V3 API using gRPC and ScalaPB with optional Akka Stream support. This project is in beta stage with basic test coverage and usable APIs.
 
 ## Overview
@@ -46,29 +48,38 @@ val config = Etcd4sClientConfig(
 val client = Etcd4sClient.newClient(config)
 
 // set a key
-client.kvService.setKey("foo", "bar") // return a Future
+client.setKey("foo", "bar") // return a Future
 
 // get a key
-client.kvService.getKey("foo").foreach { result =>
+client.getKey("foo").foreach { result =>
   assert(result == Some("bar"))
 }
 
 // delete a key
-client.kvService.deleteKey("foo").foreach { result =>
+client.deleteKey("foo").foreach { result =>
   assert(result == 1)
 }
 
 // set more key
-client.kvService.setKey("foo/bar", "Hello")
-client.kvService.setKey("foo/baz", "World")
+client.setKey("foo/bar", "Hello")
+client.setKey("foo/baz", "World")
 
 // get keys with range
-client.kvService.getRange("foo/").foreach { result =>
+client.getRange("foo/").foreach { result =>
   assert(result.count == 2)
 }
 
 // remember to shutdown the client
 client.shutdown()
+```
+
+The above is wrapper for simplified APIs. If you want to access all underlying APIs. You can use the corresponding class to have more control
+
+```scala
+client.kvApi.range(...)
+client.kvApi.put(...)
+client.leaseApi.leaseGrant(...)
+client.electionApi.leader(...)
 ```
 
 If you want the Akka Stream support for the stream APIs, you should add the `etcd4s-akka-stream` depns into your `build.sbt`
@@ -80,8 +91,9 @@ import org.etcd4s.pb.etcdserverpb._
 import akka.NotUsed
 
 // assume you have the implicit value and client needed in the scope
-val flow: Flow[WatchRequest, WatchResponse, NotUsed] = client.rpcClient.watchRpc.watchFlow
-Source.single(WatchRequest().withCreateRequest(WatchCreateRequest().withKey("foo")))
+val flow: Flow[WatchRequest, WatchResponse, NotUsed] = client.watchApi.watchFlow
+val request: WatchRequest = WatchRequest().withCreateRequest(WatchCreateRequest().withKey("foo"))
+Source.single(request)
   .via(flow)
   .runForeach { resp =>
     println(resp)

@@ -1,7 +1,10 @@
 package org.etcd4s
 
+import org.etcd4s.formats._
 import org.etcd4s.implicits._
 import org.etcd4s.pb.etcdserverpb._
+
+import scala.concurrent.ExecutionContext.Implicits.global
 
 class KVServiceSpec extends Etcd4sFeatureSpec {
 
@@ -48,6 +51,50 @@ class KVServiceSpec extends Etcd4sFeatureSpec {
     scenario(s"get '$KEY' should be empty") {
       client.kvApi.range(RangeRequest().withKey(KEY)).futureValue.count shouldBe 0
     }
+
+    scenario(s"set '$KEY' to '$VALUE_1' with lease and revoke the lease") {
+      val leaseId = client.leaseApi.leaseGrant(LeaseGrantRequest(20)).futureValue.iD
+      client.kvApi
+        .put(PutRequest().withKey(KEY).withValue(VALUE_1).withLease(leaseId))
+        .futureValue
+      client.leaseApi.leaseRevoke(LeaseRevokeRequest(leaseId)).futureValue
+      client.kvApi.range(RangeRequest().withKey(KEY)).futureValue.count shouldBe 0
+    }
+  }
+
+  feature("Create, update, read and remove using simplified APIs") {
+    val KEY = "foo"
+    val VALUE_1 = "Hello"
+    val VALUE_2 = "World"
+
+    scenario(s"remove '$KEY'") {
+      client.deleteKey(KEY).futureValue
+    }
+
+    scenario(s"set '$KEY' to '$VALUE_1'") {
+      client.setKey(KEY, VALUE_1).futureValue
+    }
+
+    scenario(s"get '$KEY' should be '$VALUE_1'") {
+      client.getKey(KEY).futureValue.get shouldBe VALUE_1
+    }
+
+    scenario(s"update '$KEY' to '$VALUE_2'") {
+      client.setKey(KEY, VALUE_2).futureValue
+    }
+
+    scenario(s"get '$KEY' should be '$VALUE_2'") {
+      client.getKey(KEY).futureValue.get shouldBe VALUE_2
+    }
+
+    scenario(s"remove '$KEY' should have 1 key") {
+      client.deleteKey(KEY).futureValue shouldBe 1
+    }
+
+    scenario(s"get '$KEY' should be empty") {
+      client.getKey(KEY).futureValue shouldBe None
+    }
+
   }
 
   feature("KV api with range of keys") {
