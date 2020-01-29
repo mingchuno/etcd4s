@@ -6,13 +6,13 @@ A Scala etcd client implementing V3 API using gRPC and ScalaPB with optional Akk
 
 ## Overview
 
-This repo is a client library of [etcd](https://coreos.com/etcd/) implementing V3 [APIs](https://coreos.com/etcd/docs/latest/learning/api.html) using gRPC under the hood with optional Akka Stream support for stream APIs. This library implement the complete set of the APIs in the V3 protoal. More information about the APIs can be found here:
+This repo is a client library of [etcd](https://etcd.io/) implementing V3 [APIs](https://etcd.io/docs/v3.3.12/rfc/) using gRPC under the hood with optional Akka Stream support for stream APIs. This library implement the complete set of the APIs in the V3 protoal. More information about the APIs can be found here:
 
-* [etcd V3 API overview](https://coreos.com/etcd/docs/latest/learning/api.html)
-* [etcd V3 API Reference](https://coreos.com/etcd/docs/latest/dev-guide/api_reference_v3.html)
+* [etcd V3 API overview](https://etcd.io/docs/v3.3.12/rfc/)
+* [etcd V3 API Reference](https://etcd.io/docs/v3.3.12/dev-guide/api_reference_v3/)
 * [protobuf defination](https://github.com/mingchuno/etcd4s/tree/master/etcd4s-core/src/main/protobuf)
 
-Note that this library do not support gRPC json gateway and use raw gRPC call instead (underlying is java-grpc). Also, this project cross build against Scala 2.11 and 2.12.
+Note that this library do not support gRPC json gateway and use raw gRPC call instead (underlying is java-grpc). This project cross build against Scala 2.11, 2.12 and 2.13 and also tested against etcd 3.2.x, 3.3.x but fail under 3.4.x.
 
 ## Getting Started
 
