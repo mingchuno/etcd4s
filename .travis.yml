@@ -6,6 +6,9 @@ scala:
   - 2.12.10
   - 2.11.12
   - 2.13.1
+env:
+  - ETCD_VERSION=v3.2.28
+  - ETCD_VERSION=v3.3.18
 sudo: required
 services:
   - docker
