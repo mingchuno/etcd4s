@@ -48,7 +48,7 @@ private[etcd4s] class EtcdChannelBuilder(config: Etcd4sClientConfig) {
   }
 }
 
-private[etcd4s] class Etcd4sClient(val channel: ManagedChannel)
+private[etcd4s] class Etcd4sClient(protected val channel: ManagedChannel)
     extends AuthService
     with ClusterService
     with LockService
