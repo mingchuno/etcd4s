@@ -2,8 +2,6 @@
 
 [![Build Status](https://travis-ci.org/mingchuno/etcd4s.svg?branch=master)](https://travis-ci.org/mingchuno/etcd4s)
 
-**THIS BRANCH IS UNDER ACTIVE DEVELOPMENT**
-
 A Scala etcd client implementing V3 API using gRPC and ScalaPB with optional Akka Stream support. This project is in beta stage with basic test coverage and usable APIs.
 
 ## Overview
@@ -21,13 +19,13 @@ Note that this library do not support gRPC json gateway and use raw gRPC call in
 The core lib
 
 ```scala
-libraryDependencies += "com.github.mingchuno" %% "etcd4s-core" % "0.3.0-snapshot"
+libraryDependencies += "com.github.mingchuno" %% "etcd4s-core" % "0.3.0"
 ```
 
 To include akka stream support for stream API
 
 ```scala
-libraryDependencies += "com.github.mingchuno" %% "etcd4s-akka-stream" % "0.3.0-snapshot"
+libraryDependencies += "com.github.mingchuno" %% "etcd4s-akka-stream" % "0.3.0"
 ```
 
 ## Usage
