@@ -21,13 +21,13 @@ Note that this library do not support gRPC json gateway and use raw gRPC call in
 The core lib
 
 ```scala
-libraryDependencies += "com.github.mingchuno" %% "etcd4s-core" % "0.2.0"
+libraryDependencies += "com.github.mingchuno" %% "etcd4s-core" % "0.3.0-snapshot"
 ```
 
 To include akka stream support for stream API
 
 ```scala
-libraryDependencies += "com.github.mingchuno" %% "etcd4s-akka-stream" % "0.2.0"
+libraryDependencies += "com.github.mingchuno" %% "etcd4s-akka-stream" % "0.3.0-snapshot"
 ```
 
 ## Usage
