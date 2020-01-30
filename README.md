@@ -71,7 +71,7 @@ client.getRange("foo/").foreach { result =>
 client.shutdown()
 ```
 
-The above is wrapper for simplified APIs. If you want to access all underlying APIs. You can use the corresponding class to have more control
+The above is wrapper for simplified APIs. If you want to access all underlying APIs with full options. You can use the corresponding api instance to have more control.
 
 ```scala
 client.kvApi.range(...)
