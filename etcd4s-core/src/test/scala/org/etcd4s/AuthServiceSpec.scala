@@ -17,8 +17,8 @@ class AuthServiceSpec extends Etcd4sFeatureSpec {
     client.authApi.authEnable(AuthEnableRequest()).futureValue
   }
 
-  feature("client with auth") {
-    scenario("should be able the call api") {
+  Feature("client with auth") {
+    Scenario("should be able the call api") {
       val authClient = getAuthClient
       authClient.kvApi.put(PutRequest().withKey("foo").withValue("bar")).futureValue
       val value: String =

@@ -2,23 +2,24 @@ package org.etcd4s.implicits
 
 import com.google.protobuf.ByteString
 import org.etcd4s.pb.etcdserverpb.RangeRequest
-import org.scalatest._
+import org.scalatest.featurespec.AnyFeatureSpecLike
+import org.scalatest.matchers.should.Matchers
 
-class ImplicitsOpsSpec extends FeatureSpec with Matchers {
-  feature("RequestPrefixOps should be able to convert given key to range end") {
-    scenario("simple foo/ range") {
+class ImplicitsOpsSpec extends AnyFeatureSpecLike with Matchers {
+  Feature("RequestPrefixOps should be able to convert given key to range end") {
+    Scenario("simple foo/ range") {
       val req = RangeRequest().withPrefix("foo/")
       (req.key: String) shouldBe "foo/"
       (req.rangeEnd: String) shouldBe "foo0"
     }
 
-    scenario("other ascii chars should work too") {
+    Scenario("other ascii chars should work too") {
       val req = RangeRequest().withPrefix("foo~")
       (req.key: String) shouldBe "foo~"
       req.rangeEnd.toByteArray shouldBe Array[Byte](102, 111, 111, 127)
     }
 
-    scenario("should return []byte{0} for 0xff") {
+    Scenario("should return []byte{0} for 0xff") {
       val FF = Array[Byte](-1)
       val ZERO = Array[Byte](0)
       val req = RangeRequest().withPrefix(ByteString.copyFrom(FF))
@@ -26,7 +27,7 @@ class ImplicitsOpsSpec extends FeatureSpec with Matchers {
       req.rangeEnd.toByteArray shouldBe ZERO
     }
 
-    scenario("should return b for a0xff") {
+    Scenario("should return b for a0xff") {
       val AFF = Array[Byte](97, -1)
       val B = Array[Byte](98)
       val req = RangeRequest().withPrefix(ByteString.copyFrom(AFF))
@@ -34,7 +35,7 @@ class ImplicitsOpsSpec extends FeatureSpec with Matchers {
       req.rangeEnd.toByteArray shouldBe B
     }
 
-    scenario("should wrap around with Byte.MaxValue") {
+    Scenario("should wrap around with Byte.MaxValue") {
       val MAX = Array[Byte](Byte.MaxValue)
       val MIN = Array[Byte](Byte.MinValue)
       val req = RangeRequest().withPrefix(ByteString.copyFrom(MAX))
@@ -42,7 +43,7 @@ class ImplicitsOpsSpec extends FeatureSpec with Matchers {
       req.rangeEnd.toByteArray shouldBe MIN
     }
 
-    scenario("try to CKJ chars") {
+    Scenario("try to CKJ chars") {
       val ckjStr = "你好"
       val arry: Array[Byte] = ckjStr.getBytes("UTF-8")
 

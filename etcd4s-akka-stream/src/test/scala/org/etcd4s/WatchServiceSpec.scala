@@ -25,8 +25,8 @@ class WatchServiceSpec
   implicit val ec = system.dispatcher
   implicit val mat = ActorMaterializer()
 
-  feature("watch service") {
-    scenario("watch for key change") {
+  Feature("watch service") {
+    Scenario("watch for key change") {
       val KEY = "foo"
       val timeout = 3 seconds
 

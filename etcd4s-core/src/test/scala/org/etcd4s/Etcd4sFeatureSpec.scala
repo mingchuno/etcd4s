@@ -1,13 +1,15 @@
 package org.etcd4s
 
 import org.scalatest._
+import org.scalatest.featurespec.AnyFeatureSpecLike
+import org.scalatest.matchers.should.Matchers
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.time.{Seconds, Span}
 
 import scala.concurrent.ExecutionContext.Implicits.global
 
 trait Etcd4sFeatureSpec
-    extends FeatureSpecLike
+    extends AnyFeatureSpecLike
     with Matchers
     with ScalaFutures
     with OptionValues
