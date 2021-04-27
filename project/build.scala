@@ -5,7 +5,7 @@ import xerial.sbt.Sonatype._
 object build {
   val etcd4sSettings = Seq(
     organization := "com.github.mingchuno",
-    scalaVersion := "2.13.4",
+    scalaVersion := "2.13.5",
     version      := "0.4.0",
     crossScalaVersions := Seq("2.12.10", "2.13.4"),
     scalacOptions ++= Seq(
