@@ -2,7 +2,7 @@ import sbt._
 import scalapb.compiler.Version._
 
 object Dependencies {
-  private val scala_test    = "org.scalatest" %% "scalatest" % "3.2.11"
+  private val scala_test    = "org.scalatest" %% "scalatest" % "3.2.18"
   // gRPC
   private val grpc_netty    = "io.grpc" % "grpc-netty" % grpcJavaVersion
   private val grpc_runtime  = "com.thesamet.scalapb" %% "scalapb-runtime-grpc" % scalapbVersion
